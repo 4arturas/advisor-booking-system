@@ -79,3 +79,60 @@ If another customer comes too late, the API returns `409 Conflict`.
 - keeping PostgreSQL as the main source of truth
 - using Redis for fast reads and short reservations
 - using RabbitMQ for background email work
+
+## How to run
+
+You need Docker Desktop running on your machine.
+
+Start all services:
+
+```bash
+docker compose up -d
+```
+
+Stop all services:
+
+```bash
+docker compose down
+```
+
+## Where to open
+
+| Service | Address |
+|---------|---------|
+| React UI (Node-RED) | http://localhost:1880 |
+| React UI (Spring Boot) | http://localhost:8080 |
+| Node-RED editor | http://localhost:1880/red |
+| Grafana | http://localhost:3000 |
+| Prometheus | http://localhost:9090 |
+| RabbitMQ management | http://localhost:15672 |
+
+**Grafana login:** admin / admin
+
+**RabbitMQ login:** guest / guest
+
+## How to test
+
+Open http://localhost:1880 in your browser. Pick an advisor, choose a date, pick a time slot, enter your name and email, then click **Book**. If the booking works, you will see a success message. The slot will change to "Booked".
+
+You can also use Spring Boot UI at http://localhost:8080. It works the same way.
+
+## Useful commands
+
+Check if all containers are running:
+
+```bash
+docker ps
+```
+
+Check logs from Node-RED:
+
+```bash
+docker logs node-red
+```
+
+Run Spring Boot tests locally (requires Java 17+):
+
+```bash
+mvn test
+```
