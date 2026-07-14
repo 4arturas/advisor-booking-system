@@ -100,7 +100,7 @@ docker compose down
 
 | Service | Address |
 |---------|---------|
-| React UI (Node-RED) | http://localhost:1880 |
+| React UI (Node-RED) | http://localhost:1880/ui |
 | React UI (Spring Boot) | http://localhost:8080 |
 | Grafana | http://localhost:3000 |
 | Prometheus | http://localhost:9090 |
