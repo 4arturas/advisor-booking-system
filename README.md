@@ -102,7 +102,6 @@ docker compose down
 |---------|---------|
 | React UI (Node-RED) | http://localhost:1880 |
 | React UI (Spring Boot) | http://localhost:8080 |
-| Node-RED editor | http://localhost:1880/red |
 | Grafana | http://localhost:3000 |
 | Prometheus | http://localhost:9090 |
 | RabbitMQ management | http://localhost:15672 |
