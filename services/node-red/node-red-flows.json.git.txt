@@ -1,0 +1,310 @@
+﻿[
+  {
+    "id": "tab-advisor",
+    "type": "tab",
+    "label": "Demo",
+    "disabled": false,
+    "info": "Demo flow - PostgreSQL, Redis and RabbitMQ connectivity test"
+  },
+  {
+    "id": "postgres-config-advisor",
+    "type": "postgreSQLConfig",
+    "name": "Advisor Database",
+    "host": "${POSTGRES_HOST}",
+    "port": 5432,
+    "database": "${POSTGRES_DB}",
+    "ssl": false,
+    "applicationName": "node-red",
+    "max": 10,
+    "idle": 1000,
+    "connectionTimeout": 10000,
+    "user": "${POSTGRES_USER}",
+    "password": "${POSTGRES_PASS}"
+  },
+  {
+    "id": "inject-test-query",
+    "type": "inject",
+    "z": "tab-advisor",
+    "name": "Test Query",
+    "props": [],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "x": 150,
+    "y": 200,
+    "wires": [
+      [
+        "postgres-query"
+      ]
+    ]
+  },
+  {
+    "id": "postgres-query",
+    "type": "postgresql",
+    "z": "tab-advisor",
+    "name": "Query Tables",
+    "query": "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'",
+    "postgreSQLConfig": "postgres-config-advisor",
+    "split": false,
+    "rowsPerMsg": 1,
+    "outputs": 1,
+    "x": 380,
+    "y": 200,
+    "wires": [
+      [
+        "debug-query-result"
+      ]
+    ]
+  },
+  {
+    "id": "debug-query-result",
+    "type": "debug",
+    "z": "tab-advisor",
+    "name": "Query Result",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 620,
+    "y": 200,
+    "wires": []
+  },
+  {
+    "id": "redis-config-advisor",
+    "type": "redis-config",
+    "name": "Advisor Redis",
+    "options": "{\"host\":\"redis\",\"port\":6379}",
+    "cluster": false,
+    "optionsType": "json"
+  },
+  {
+    "id": "inject-set-value",
+    "type": "inject",
+    "z": "tab-advisor",
+    "name": "Set Value",
+    "props": [
+      {
+        "p": "payload"
+      },
+      {
+        "p": "topic",
+        "vt": "str"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "test:key",
+    "payload": "Hello from Node-RED",
+    "payloadType": "str",
+    "x": 150,
+    "y": 340,
+    "wires": [
+      [
+        "redis-set"
+      ]
+    ]
+  },
+  {
+    "id": "redis-set",
+    "type": "redis-command",
+    "z": "tab-advisor",
+    "name": "SET",
+    "server": "redis-config-advisor",
+    "command": "set",
+    "topic": "",
+    "params": "[]",
+    "paramsType": "json",
+    "payloadType": "json",
+    "block": false,
+    "x": 380,
+    "y": 340,
+    "wires": [
+      [
+        "debug-redis-set"
+      ]
+    ]
+  },
+  {
+    "id": "debug-redis-set",
+    "type": "debug",
+    "z": "tab-advisor",
+    "name": "SET Result",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 620,
+    "y": 340,
+    "wires": []
+  },
+  {
+    "id": "inject-get-value",
+    "type": "inject",
+    "z": "tab-advisor",
+    "name": "Get Value",
+    "props": [
+      {
+        "p": "topic",
+        "vt": "str"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "test:key",
+    "x": 150,
+    "y": 420,
+    "wires": [
+      [
+        "redis-get"
+      ]
+    ]
+  },
+  {
+    "id": "redis-get",
+    "type": "redis-command",
+    "z": "tab-advisor",
+    "name": "GET",
+    "server": "redis-config-advisor",
+    "command": "get",
+    "topic": "",
+    "params": "[]",
+    "paramsType": "json",
+    "payloadType": "json",
+    "block": false,
+    "x": 380,
+    "y": 420,
+    "wires": [
+      [
+        "debug-redis-get"
+      ]
+    ]
+  },
+  {
+    "id": "debug-redis-get",
+    "type": "debug",
+    "z": "tab-advisor",
+    "name": "GET Result",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 620,
+    "y": 420,
+    "wires": []
+  },
+  {
+    "id": "amqp-broker-config",
+    "type": "amqp-broker",
+    "name": "RabbitMQ",
+    "host": "rabbitmq",
+    "port": 5672,
+    "frameMax": 8192,
+    "vhost": "",
+    "tls": false,
+    "credsFromSettings": true
+  },
+  {
+    "id": "inject-publish",
+    "type": "inject",
+    "z": "tab-advisor",
+    "name": "Publish Message",
+    "props": [
+      {
+        "p": "payload"
+      },
+      {
+        "p": "topic",
+        "vt": "str"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "test.routing.key",
+    "payload": "Hello from Node-RED",
+    "payloadType": "str",
+    "x": 150,
+    "y": 540,
+    "wires": [
+      [
+        "rabbitmq-producer"
+      ]
+    ]
+  },
+  {
+    "id": "rabbitmq-producer",
+    "type": "amqp-out",
+    "z": "tab-advisor",
+    "name": "Publish to RabbitMQ",
+    "broker": "amqp-broker-config",
+    "exchangeName": "test-exchange",
+    "exchangeType": "direct",
+    "exchangeRoutingKey": "test.routing.key",
+    "exchangeDurable": true,
+    "x": 400,
+    "y": 540,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "rabbitmq-consumer",
+    "type": "amqp-in",
+    "z": "tab-advisor",
+    "name": "Consume from RabbitMQ",
+    "broker": "amqp-broker-config",
+    "prefetch": 1,
+    "noAck": false,
+    "exchangeName": "test-exchange",
+    "exchangeType": "direct",
+    "exchangeRoutingKey": "test.routing.key",
+    "exchangeDurable": true,
+    "queueName": "test-queue",
+    "queueExclusive": false,
+    "queueDurable": true,
+    "queueAutoDelete": false,
+    "x": 180,
+    "y": 620,
+    "wires": [
+      [
+        "debug-amqp-subscribe"
+      ]
+    ]
+  },
+  {
+    "id": "debug-amqp-subscribe",
+    "type": "debug",
+    "z": "tab-advisor",
+    "name": "Received",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 620,
+    "y": 620,
+    "wires": []
+  }
+]

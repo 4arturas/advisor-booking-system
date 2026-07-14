@@ -1,0 +1,2501 @@
+[
+    {
+        "id": "f8073007af13446f",
+        "type": "tab",
+        "label": "API Booking",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "tab-booking",
+        "type": "tab",
+        "label": "API Availability",
+        "disabled": false,
+        "info": "Booking service - API, availability check, race condition handling, notifications"
+    },
+    {
+        "id": "7a504e5e0821d83a",
+        "type": "tab",
+        "label": "API Advisors",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "195cd2c1ac237259",
+        "type": "tab",
+        "label": "Email Notification Service",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "tab-ui",
+        "type": "tab",
+        "label": "UI",
+        "disabled": false,
+        "info": "React + Ant Design UI for the Advisor Booking System"
+    },
+    {
+        "id": "tab-test",
+        "type": "tab",
+        "label": "Test",
+        "disabled": false,
+        "info": "Test flows for the Advisor Booking System"
+    },
+    {
+        "id": "tab-advisor",
+        "type": "tab",
+        "label": "Demo",
+        "disabled": false,
+        "info": "Demo flow - PostgreSQL, Redis and RabbitMQ connectivity test"
+    },
+    {
+        "id": "tab-db-init",
+        "type": "tab",
+        "label": "Database Init",
+        "disabled": false,
+        "info": "Initialize database schema and seed data for the Advisor Booking System"
+    },
+    {
+        "id": "test-group-booking",
+        "type": "group",
+        "z": "tab-test",
+        "name": "Test Booking API",
+        "style": {
+            "label": true,
+            "color": "#FF7333"
+        },
+        "nodes": [
+            "test-booking-inject",
+            "test-booking-http",
+            "test-booking-debug"
+        ],
+        "x": 44,
+        "y": 59,
+        "w": 752,
+        "h": 82
+    },
+    {
+        "id": "test-group-availability",
+        "type": "group",
+        "z": "tab-test",
+        "name": "Test Availability API",
+        "style": {
+            "label": true,
+            "color": "#73BF73"
+        },
+        "nodes": [
+            "test-avail-inject",
+            "test-avail-http",
+            "test-avail-debug"
+        ],
+        "x": 44,
+        "y": 179,
+        "w": 782,
+        "h": 82
+    },
+    {
+        "id": "test-group-duplicate",
+        "type": "group",
+        "z": "tab-test",
+        "name": "Test Duplicate Booking (Race Condition)",
+        "style": {
+            "label": true,
+            "color": "#A80036"
+        },
+        "nodes": [
+            "test-dup-inject",
+            "test-dup-fork",
+            "test-dup-http-1",
+            "test-dup-http-2",
+            "test-dup-debug-1",
+            "test-dup-debug-2"
+        ],
+        "x": 44,
+        "y": 279,
+        "w": 872,
+        "h": 122
+    },
+    {
+        "id": "c51501eee8a0e7ab",
+        "type": "group",
+        "z": "f8073007af13446f",
+        "name": "Booking Service",
+        "style": {
+            "stroke": "#ff9999",
+            "label": true,
+            "color": "#a61c1c"
+        },
+        "nodes": [
+            "bd39703e464b2ea9",
+            "5fb97fb2867de0aa",
+            "82bd5e5dd7ec980f",
+            "3b692511a6807088",
+            "df28b686d472efa6",
+            "f622d02a09184742",
+            "875eda00b5ebb927",
+            "81474cf0763a79cd",
+            "c0f3bc3b5fd54c8a",
+            "6d9db025d9a360fe",
+            "dd339dc198cb5377",
+            "ef86ba2e27019759",
+            "9fee253edcce8582",
+            "56f7ab211c40ebff",
+            "5904261bd11e2834",
+            "e00603b26bce0deb",
+            "0c5c0f11f5ab4d7f",
+            "70bba6c40cd0bfac",
+            "486a2cd19d77c323",
+            "c9e1d1777267942d",
+            "8855c1b8f634e79e",
+            "8820888196e86572",
+            "63961fa75f6650fd",
+            "b974e78c81c87a74",
+            "3c9616721961c378",
+            "f94bf356027bc4f5",
+            "a1a0163fa90c1cbb",
+            "a0b5522facee06be",
+            "2d6ad0f34ab722ab",
+            "69fb11ba4282b5f9",
+            "35aa0031398670e6",
+            "7602e5f1f9e9d118",
+            "46ee4ca7d4a755eb",
+            "b7c3f4e1a2d5c6b7",
+            "d1e2f3a4b5c6d7e8",
+            "email-retry-delay",
+            "email-failure-debug",
+            "email-metric-inc-failed",
+            "email-exporter-failed"
+        ],
+        "x": 14,
+        "y": 19,
+        "w": 1572,
+        "h": 762
+    },
+    {
+        "id": "test-dup-fork",
+        "type": "junction",
+        "z": "tab-test",
+        "g": "test-group-duplicate",
+        "x": 400,
+        "y": 340,
+        "wires": [
+            [
+                "test-dup-http-1",
+                "test-dup-http-2"
+            ]
+        ]
+    },
+    {
+        "id": "postgres-config-advisor",
+        "type": "postgreSQLConfig",
+        "name": "Advisor Database",
+        "host": "${POSTGRES_HOST}",
+        "port": 5432,
+        "database": "${POSTGRES_DB}",
+        "ssl": false,
+        "applicationName": "node-red",
+        "max": 10,
+        "idle": 1000,
+        "connectionTimeout": 10000,
+        "user": "${POSTGRES_USER}",
+        "password": "${POSTGRES_PASS}"
+    },
+    {
+        "id": "amqp-broker-config",
+        "type": "amqp-broker",
+        "name": "RabbitMQ",
+        "host": "rabbitmq",
+        "port": 5672,
+        "frameMax": 8192,
+        "vhost": "",
+        "tls": false,
+        "credsFromSettings": true
+    },
+    {
+        "id": "1b5b62ae23300ae3",
+        "type": "redis-config",
+        "name": "Redis Broker",
+        "options": "{\"host\":\"redis\",\"port\":6379}",
+        "cluster": false,
+        "optionsType": "json"
+    },
+    {
+        "id": "prom-metric-booking-reqs",
+        "type": "prometheus-metric-config",
+        "z": "f8073007af13446f",
+        "name": "nr_booking_requests_total",
+        "help": "Total number of booking requests received",
+        "labels": "",
+        "mtype": "counter"
+    },
+    {
+        "id": "prom-metric-booking-success",
+        "type": "prometheus-metric-config",
+        "z": "f8073007af13446f",
+        "name": "nr_booking_success_total",
+        "help": "Total number of successful bookings",
+        "labels": "",
+        "mtype": "counter"
+    },
+    {
+        "id": "prom-metric-booking-failures",
+        "type": "prometheus-metric-config",
+        "z": "f8073007af13446f",
+        "name": "nr_booking_failure_total",
+        "help": "Total number of failed booking attempts",
+        "labels": "",
+        "mtype": "counter"
+    },
+    {
+        "id": "prom-metric-avail-db-err",
+        "type": "prometheus-metric-config",
+        "z": "tab-booking",
+        "name": "nr_availability_db_errors_total",
+        "help": "Total number of database errors in availability checks",
+        "labels": "",
+        "mtype": "counter"
+    },
+    {
+        "id": "prom-metric-avail-checks",
+        "type": "prometheus-metric-config",
+        "z": "tab-booking",
+        "name": "nr_availability_checks_total",
+        "help": "Total number of availability check requests",
+        "labels": "",
+        "mtype": "counter"
+    },
+    {
+        "id": "prom-metric-advisors-db-err",
+        "type": "prometheus-metric-config",
+        "z": "7a504e5e0821d83a",
+        "name": "nr_advisors_db_errors_total",
+        "help": "Total number of database errors in advisor list requests",
+        "labels": "",
+        "mtype": "counter"
+    },
+    {
+        "id": "prom-metric-advisors-reqs",
+        "type": "prometheus-metric-config",
+        "z": "7a504e5e0821d83a",
+        "name": "nr_advisors_requests_total",
+        "help": "Total number of advisor list requests",
+        "labels": "",
+        "mtype": "counter"
+    },
+    {
+        "id": "prom-metric-email-received",
+        "type": "prometheus-metric-config",
+        "z": "195cd2c1ac237259",
+        "name": "nr_email_received_total",
+        "help": "Total email notifications received from queue",
+        "labels": "",
+        "mtype": "counter"
+    },
+    {
+        "id": "prom-metric-email-sent",
+        "type": "prometheus-metric-config",
+        "z": "195cd2c1ac237259",
+        "name": "nr_email_sent_total",
+        "help": "Total emails sent successfully",
+        "labels": "",
+        "mtype": "counter"
+    },
+    {
+        "id": "prom-metric-email-failed",
+        "type": "prometheus-metric-config",
+        "z": "195cd2c1ac237259",
+        "name": "nr_email_failed_total",
+        "help": "Total email send failures after retries",
+        "labels": "",
+        "mtype": "counter"
+    },
+    {
+        "id": "prom-metric-email-retry",
+        "type": "prometheus-metric-config",
+        "z": "195cd2c1ac237259",
+        "name": "nr_email_retry_total",
+        "help": "Total email retry attempts",
+        "labels": "",
+        "mtype": "counter"
+    },
+    {
+        "id": "prom-metric-email-dlq",
+        "type": "prometheus-metric-config",
+        "z": "195cd2c1ac237259",
+        "name": "nr_email_dlq_total",
+        "help": "Total emails sent to dead letter queue",
+        "labels": "",
+        "mtype": "counter"
+    },
+    {
+        "id": "10da1c8bf93710ab",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-contrib-postgresql": "0.15.4",
+            "@villanoo/node-red-contrib-amqp": "2.4.7",
+            "node-red-contrib-redis": "1.4.0",
+            "node-red-contrib-prometheus-exporter": "1.0.5",
+            "@digital-tvilling/node-red-openapi-generator": "1.1.1"
+        }
+    },
+    {
+        "id": "redis-config-advisor",
+        "type": "redis-config",
+        "name": "Advisor Redis",
+        "options": "{\"host\":\"redis\",\"port\":6379}",
+        "cluster": false,
+        "optionsType": "json"
+    },
+    {
+        "id": "7f92d83e3126dd68",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-contrib-postgresql": "0.15.4",
+            "node-red-contrib-redis": "1.4.0",
+            "@villanoo/node-red-contrib-amqp": "2.4.7"
+        }
+    },
+    {
+        "id": "swagger-ui-doc",
+        "type": "swagger-doc",
+        "z": "tab-ui",
+        "summary": "Serve the booking UI",
+        "description": "Serves the React booking UI.",
+        "tags": "UI",
+        "parameters": [],
+        "responses": [],
+        "requestBody": null,
+        "deprecated": false
+    },
+    {
+        "id": "d541ecfbec77206c",
+        "type": "swagger-doc",
+        "z": "tab-booking",
+        "summary": "Get available time slots for an advisor",
+        "description": "Returns available booking slots for a specific advisor.",
+        "tags": "Availability",
+        "parameters": [],
+        "responses": [],
+        "requestBody": null,
+        "deprecated": false
+    },
+    {
+        "id": "swagger-advisors-doc",
+        "type": "swagger-doc",
+        "z": "7a504e5e0821d83a",
+        "summary": "Get all advisors",
+        "description": "Returns the list of available advisors.",
+        "tags": "Advisors",
+        "parameters": [],
+        "responses": [],
+        "requestBody": null,
+        "deprecated": false
+    },
+    {
+        "id": "2be7a60e251f8b48",
+        "type": "swagger-doc",
+        "z": "f8073007af13446f",
+        "summary": "Book a time slot with an advisor",
+        "description": "Create a new booking reservation for an advisor time slot.",
+        "tags": "Bookings",
+        "parameters": [],
+        "responses": [],
+        "requestBody": null,
+        "deprecated": false
+    },
+    {
+        "id": "bd39703e464b2ea9",
+        "type": "http in",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "name": "POST /api/bookings",
+        "url": "/api/bookings",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "2be7a60e251f8b48",
+        "x": 130,
+        "y": 380,
+        "wires": [
+            [
+                "5fb97fb2867de0aa",
+                "486a2cd19d77c323"
+            ]
+        ]
+    },
+    {
+        "id": "5fb97fb2867de0aa",
+        "type": "change",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "name": "Build Booking Context",
+        "rules": [
+            {
+                "t": "set",
+                "p": "booking",
+                "pt": "msg",
+                "to": "{ \"advisorId\": $number(payload.advisorId), \"customerName\": $trim(payload.customerName), \"customerEmail\": $trim(payload.customerEmail), \"slotId\": $number(payload.slotId) }",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "params",
+                "pt": "msg",
+                "to": "[ booking.slotId ]",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "lockKey",
+                "pt": "msg",
+                "to": "'lock:advisor:' & booking.advisorId & ':' & booking.slotId",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "[ 'lock:advisor:' & booking.advisorId & ':' & booking.slotId, 'locked', 'NX', 'PX', '30000' ]",
+                "tot": "jsonata"
+            }
+        ],
+        "x": 300,
+        "y": 320,
+        "wires": [
+            [
+                "56f7ab211c40ebff"
+            ]
+        ],
+        "info": "Normalizes the request and prepares shared booking state."
+    },
+    {
+        "id": "3b692511a6807088",
+        "type": "switch",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "name": "Slot Secured?",
+        "property": "payload[0].id",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 860,
+        "y": 320,
+        "wires": [
+            [
+                "2d6ad0f34ab722ab"
+            ],
+            [
+                "875eda00b5ebb927"
+            ]
+        ],
+        "info": "Checks whether the Redis lock was acquired."
+    },
+    {
+        "id": "82bd5e5dd7ec980f",
+        "type": "postgresql",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "name": "1. Update Slot Availability",
+        "query": "UPDATE booking_slot \nSET is_booked = true \nWHERE id = $1::integer \n  AND is_booked = false\nRETURNING id, start_time, end_time;",
+        "postgreSQLConfig": "postgres-config-advisor",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 710,
+        "y": 260,
+        "wires": [
+            [
+                "3b692511a6807088"
+            ]
+        ],
+        "info": "Marks the selected slot as booked if it is still free."
+    },
+    {
+        "id": "2d6ad0f34ab722ab",
+        "type": "change",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "name": "Capture Slot Times",
+        "rules": [
+            {
+                "t": "set",
+                "p": "booking.startTime",
+                "pt": "msg",
+                "to": "payload[0].start_time",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "booking.endTime",
+                "pt": "msg",
+                "to": "payload[0].end_time",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "params",
+                "pt": "msg",
+                "to": "[ booking.slotId, booking.advisorId, booking.customerName, booking.customerEmail ]",
+                "tot": "jsonata"
+            }
+        ],
+        "x": 1070,
+        "y": 300,
+        "wires": [
+            [
+                "df28b686d472efa6"
+            ]
+        ],
+        "info": "Copies slot timestamps and prepares insert parameters."
+    },
+    {
+        "id": "df28b686d472efa6",
+        "type": "postgresql",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "name": "2. Create Booking Record",
+        "query": "INSERT INTO booking (slot_id, advisor_id, customer_name, customer_email)\nVALUES ($1::integer, $2::integer, $3, $4)\nRETURNING id;",
+        "postgreSQLConfig": "postgres-config-advisor",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1070,
+        "y": 240,
+        "wires": [
+            [
+                "f622d02a09184742"
+            ]
+        ],
+        "info": "Inserts the booking row and returns the new booking id."
+    },
+    {
+        "id": "f622d02a09184742",
+        "type": "switch",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "name": "Successfully Booked?",
+        "property": "payload[0].id",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1040,
+        "y": 180,
+        "wires": [
+            [
+                "6d9db025d9a360fe",
+                "ef86ba2e27019759",
+                "c9e1d1777267942d"
+            ],
+            [
+                "875eda00b5ebb927"
+            ]
+        ],
+        "info": "Routes successful inserts to response and messaging."
+    },
+    {
+        "id": "875eda00b5ebb927",
+        "type": "change",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "name": "2. Build Redis Release",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "[ msg.lockKey ]",
+                "tot": "jsonata"
+            }
+        ],
+        "x": 1380,
+        "y": 500,
+        "wires": [
+            [
+                "e00603b26bce0deb",
+                "7602e5f1f9e9d118"
+            ]
+        ],
+        "info": "Prepares the Redis key for lock cleanup after booking."
+    },
+    {
+        "id": "c0f3bc3b5fd54c8a",
+        "type": "change",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "name": "Build Error Response",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"error\": \"Time slot is no longer available or does not exist\"}",
+                "tot": "json"
+            },
+            {
+                "t": "set",
+                "p": "statusCode",
+                "pt": "msg",
+                "to": "409",
+                "tot": "num"
+            }
+        ],
+        "x": 1400,
+        "y": 620,
+        "wires": [
+            [
+                "81474cf0763a79cd"
+            ]
+        ],
+        "info": "Builds the 409 response for an already-taken slot."
+    },
+    {
+        "id": "81474cf0763a79cd",
+        "type": "http response",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "name": "HTTP 409 Response",
+        "statusCode": "409",
+        "headers": {},
+        "x": 1420,
+        "y": 680,
+        "wires": [],
+        "info": "Returns the conflict response to the client."
+    },
+    {
+        "id": "6d9db025d9a360fe",
+        "type": "change",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "name": "Build MQ Message",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\n  \"bookingId\": payload[0].id,\n  \"slotId\": booking.slotId,\n  \"advisorId\": booking.advisorId,\n  \"customerName\": booking.customerName,\n  \"customerEmail\": booking.customerEmail,\n  \"startTime\": booking.startTime,\n  \"endTime\": booking.endTime\n}",
+                "tot": "jsonata"
+            }
+        ],
+        "x": 1430,
+        "y": 140,
+        "wires": [
+            [
+                "dd339dc198cb5377"
+            ]
+        ],
+        "info": "Creates the booking confirmation event payload."
+    },
+    {
+        "id": "dd339dc198cb5377",
+        "type": "amqp-out",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "name": "Publish booking.confirmed",
+        "broker": "amqp-broker-config",
+        "exchangeName": "booking-exchange",
+        "exchangeType": "direct",
+        "exchangeRoutingKey": "booking.confirmed",
+        "exchangeDurable": true,
+        "outputs": 0,
+        "x": 1440,
+        "y": 60,
+        "wires": [],
+        "info": "Publishes the confirmed booking event to RabbitMQ."
+    },
+    {
+        "id": "ef86ba2e27019759",
+        "type": "change",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "name": "Prepare Success Response",
+        "rules": [
+            {
+                "t": "set",
+                "p": "responsePayload",
+                "pt": "msg",
+                "to": "{  \"bookingId\": payload[0].id,  \"slotId\": booking.slotId,  \"advisorId\": booking.advisorId,  \"startTime\": booking.startTime,  \"endTime\": booking.endTime,  \"customerName\": booking.customerName}",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "[ msg.lockKey ]",
+                "tot": "jsonata"
+            }
+        ],
+        "x": 1440,
+        "y": 200,
+        "wires": [
+            [
+                "70bba6c40cd0bfac"
+            ]
+        ],
+        "info": "Stores the success payload and keeps the lock key for cleanup."
+    },
+    {
+        "id": "9fee253edcce8582",
+        "type": "http response",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "name": "HTTP Response",
+        "statusCode": "200",
+        "headers": {},
+        "x": 1440,
+        "y": 380,
+        "wires": [],
+        "info": "Returns the booking success response to the client."
+    },
+    {
+        "id": "56f7ab211c40ebff",
+        "type": "redis-command",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "server": "1b5b62ae23300ae3",
+        "command": "SET",
+        "name": "Acquire Lock",
+        "x": 450,
+        "y": 380,
+        "wires": [
+            [
+                "5904261bd11e2834"
+            ]
+        ],
+        "info": "Tries to reserve the slot with a Redis SET NX lock."
+    },
+    {
+        "id": "5904261bd11e2834",
+        "type": "switch",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "name": "Lock Obtained?",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "OK",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 580,
+        "y": 320,
+        "wires": [
+            [
+                "82bd5e5dd7ec980f"
+            ],
+            [
+                "875eda00b5ebb927"
+            ]
+        ]
+    },
+    {
+        "id": "e00603b26bce0deb",
+        "type": "redis-command",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "server": "1b5b62ae23300ae3",
+        "command": "DEL",
+        "name": "2. Release Lock",
+        "topic": "",
+        "params": "",
+        "paramsType": "json",
+        "block": false,
+        "x": 1380,
+        "y": 560,
+        "wires": [
+            [
+                "c0f3bc3b5fd54c8a"
+            ]
+        ]
+    },
+    {
+        "id": "70bba6c40cd0bfac",
+        "type": "redis-command",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "server": "1b5b62ae23300ae3",
+        "command": "DEL",
+        "name": "1. Release Lock",
+        "topic": "",
+        "params": "",
+        "paramsType": "json",
+        "block": false,
+        "x": 1440,
+        "y": 260,
+        "wires": [
+            [
+                "46ee4ca7d4a755eb"
+            ]
+        ],
+        "info": "Deletes the Redis lock after a successful booking."
+    },
+    {
+        "id": "486a2cd19d77c323",
+        "type": "change",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "name": "Metric: inc",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"op\":\"inc\"}",
+                "tot": "json"
+            }
+        ],
+        "x": 220,
+        "y": 440,
+        "wires": [
+            [
+                "8820888196e86572"
+            ]
+        ]
+    },
+    {
+        "id": "c9e1d1777267942d",
+        "type": "change",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "name": "Metric: inc",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"op\":\"inc\"}",
+                "tot": "json"
+            }
+        ],
+        "x": 1050,
+        "y": 120,
+        "wires": [
+            [
+                "63961fa75f6650fd"
+            ]
+        ]
+    },
+    {
+        "id": "8855c1b8f634e79e",
+        "type": "change",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "name": "Metric: inc",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"op\":\"inc\"}",
+                "tot": "json"
+            }
+        ],
+        "x": 870,
+        "y": 740,
+        "wires": [
+            [
+                "b974e78c81c87a74"
+            ]
+        ]
+    },
+    {
+        "id": "8820888196e86572",
+        "type": "prometheus-exporter",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "name": "Booking Requests",
+        "metric": "prom-metric-booking-reqs",
+        "x": 230,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "63961fa75f6650fd",
+        "type": "prometheus-exporter",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "name": "Booking Success",
+        "metric": "prom-metric-booking-success",
+        "x": 1050,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "b974e78c81c87a74",
+        "type": "prometheus-exporter",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "name": "Booking Failures",
+        "metric": "prom-metric-booking-failures",
+        "x": 1050,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "3c9616721961c378",
+        "type": "catch",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "name": "Catch DB Failures",
+        "scope": [
+            "df28b686d472efa6"
+        ],
+        "uncaught": false,
+        "x": 130,
+        "y": 620,
+        "wires": [
+            [
+                "f94bf356027bc4f5"
+            ]
+        ],
+        "info": "Captures PostgreSQL failures from the slot update query."
+    },
+    {
+        "id": "f94bf356027bc4f5",
+        "type": "change",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "name": "Build DB Error Unlock",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "[ msg.lockKey ]",
+                "tot": "jsonata"
+            }
+        ],
+        "x": 260,
+        "y": 680,
+        "wires": [
+            [
+                "a1a0163fa90c1cbb",
+                "35aa0031398670e6"
+            ]
+        ],
+        "info": "Prepares the Redis lock key for DB failure cleanup."
+    },
+    {
+        "id": "a1a0163fa90c1cbb",
+        "type": "redis-command",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "server": "1b5b62ae23300ae3",
+        "command": "DEL",
+        "name": "3. Release Lock",
+        "topic": "",
+        "params": "",
+        "paramsType": "json",
+        "block": false,
+        "x": 420,
+        "y": 620,
+        "wires": [
+            [
+                "0c5c0f11f5ab4d7f"
+            ]
+        ],
+        "info": "Deletes the lock before returning the DB error response."
+    },
+    {
+        "id": "0c5c0f11f5ab4d7f",
+        "type": "change",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "name": "DB Error Response",
+        "rules": [
+            {
+                "t": "set",
+                "p": "statusCode",
+                "pt": "msg",
+                "to": "503",
+                "tot": "num"
+            },
+            {
+                "t": "set",
+                "p": "responsePayload",
+                "pt": "msg",
+                "to": "{\"error\": \"Database request failed\"}",
+                "tot": "json"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "responsePayload",
+                "tot": "msg"
+            }
+        ],
+        "x": 570,
+        "y": 680,
+        "wires": [
+            [
+                "a0b5522facee06be"
+            ]
+        ],
+        "info": "Builds the 503 response for database failures."
+    },
+    {
+        "id": "a0b5522facee06be",
+        "type": "http response",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "name": "HTTP 503 Response",
+        "statusCode": "503",
+        "headers": {},
+        "x": 740,
+        "y": 620,
+        "wires": [],
+        "info": "Returns the database error response to the client."
+    },
+    {
+        "id": "69fb11ba4282b5f9",
+        "type": "link in",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "name": "On Failure: Increment Counter",
+        "links": [
+            "35aa0031398670e6",
+            "7602e5f1f9e9d118"
+        ],
+        "x": 755,
+        "y": 740,
+        "wires": [
+            [
+                "8855c1b8f634e79e"
+            ]
+        ],
+        "info": "Routes booking failures to the failure metric."
+    },
+    {
+        "id": "35aa0031398670e6",
+        "type": "link out",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "name": "Trigger: DB System Error",
+        "mode": "link",
+        "links": [
+            "69fb11ba4282b5f9"
+        ],
+        "x": 515,
+        "y": 740,
+        "wires": [],
+        "info": "Forwards DB failure events to the shared failure counter."
+    },
+    {
+        "id": "7602e5f1f9e9d118",
+        "type": "link out",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "name": "Trigger: Slot Conflict Error",
+        "mode": "link",
+        "links": [
+            "69fb11ba4282b5f9"
+        ],
+        "x": 1525,
+        "y": 460,
+        "wires": [],
+        "info": "Forwards slot conflict events to the shared failure counter."
+    },
+    {
+        "id": "46ee4ca7d4a755eb",
+        "type": "change",
+        "z": "f8073007af13446f",
+        "g": "c51501eee8a0e7ab",
+        "name": "Finalize Success Response",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "responsePayload",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "statusCode",
+                "pt": "msg",
+                "to": "200",
+                "tot": "num"
+            }
+        ],
+        "x": 1430,
+        "y": 320,
+        "wires": [
+            [
+                "9fee253edcce8582"
+            ]
+        ]
+    },
+    {
+        "id": "ba99cea31f343a88",
+        "type": "http in",
+        "z": "tab-booking",
+        "name": "GET /api/availability",
+        "url": "/api/availability",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "d541ecfbec77206c",
+        "x": 430,
+        "y": 260,
+        "wires": [
+            [
+                "b8fb240b50ba90ec",
+                "avail-metric-inc"
+            ]
+        ]
+    },
+    {
+        "id": "avail-metric-inc",
+        "type": "change",
+        "z": "tab-booking",
+        "name": "Metric: inc",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"op\":\"inc\"}",
+                "tot": "json"
+            }
+        ],
+        "x": 550,
+        "y": 200,
+        "wires": [
+            [
+                "avail-exporter-checks"
+            ]
+        ]
+    },
+    {
+        "id": "avail-exporter-checks",
+        "type": "prometheus-exporter",
+        "z": "tab-booking",
+        "name": "Availability Checks",
+        "metric": "prom-metric-avail-checks",
+        "x": 690,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "avail-catch-db-err",
+        "type": "catch",
+        "z": "tab-booking",
+        "name": "Catch DB Errors",
+        "scope": [
+            "278edb11216166ce"
+        ],
+        "uncaught": false,
+        "x": 420,
+        "y": 400,
+        "wires": [
+            [
+                "avail-metric-inc-db-err"
+            ]
+        ]
+    },
+    {
+        "id": "avail-metric-inc-db-err",
+        "type": "change",
+        "z": "tab-booking",
+        "name": "Metric: inc",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"op\":\"inc\"}",
+                "tot": "json"
+            }
+        ],
+        "x": 550,
+        "y": 460,
+        "wires": [
+            [
+                "avail-exporter-db-err"
+            ]
+        ]
+    },
+    {
+        "id": "avail-exporter-db-err",
+        "type": "prometheus-exporter",
+        "z": "tab-booking",
+        "name": "DB Errors",
+        "metric": "prom-metric-avail-db-err",
+        "x": 660,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "b8fb240b50ba90ec",
+        "type": "change",
+        "z": "tab-booking",
+        "name": "Capture Params (Query)",
+        "rules": [
+            {
+                "t": "set",
+                "p": "advisorId",
+                "pt": "msg",
+                "to": "$number(req.query.advisorId)",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "date",
+                "pt": "msg",
+                "to": "$exists(req.query.date) ? $substringBefore(req.query.date, \"T\") : $formatDate($now(), \"[Y]-[M01]-[D01]\")",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "params",
+                "pt": "msg",
+                "to": "[$number(req.query.advisorId), ($exists(req.query.date) ? $substringBefore(req.query.date, \"T\") : $formatDate($now(), \"[Y]-[M01]-[D01]\")) & \" 00:00:00\", ($exists(req.query.date) ? $substringBefore(req.query.date, \"T\") : $formatDate($now(), \"[Y]-[M01]-[D01]\")) & \" 23:59:59\"]",
+                "tot": "jsonata"
+            }
+        ],
+        "x": 610,
+        "y": 320,
+        "wires": [
+            [
+                "278edb11216166ce"
+            ]
+        ]
+    },
+    {
+        "id": "278edb11216166ce",
+        "type": "postgresql",
+        "z": "tab-booking",
+        "name": "Query Available Slots",
+        "query": "SELECT id, start_time, end_time FROM booking_slot WHERE advisor_id = $1::int AND start_time >= $2::timestamp AND end_time <= $3::timestamp AND is_booked = false ORDER BY start_time;",
+        "postgreSQLConfig": "postgres-config-advisor",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 780,
+        "y": 260,
+        "wires": [
+            [
+                "1ee4358d38c854c4"
+            ]
+        ]
+    },
+    {
+        "id": "1ee4358d38c854c4",
+        "type": "change",
+        "z": "tab-booking",
+        "name": "Format Response",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\n  \"advisorId\": advisorId,\n  \"date\": date,\n  \"availableSlots\": payload.{\n    \"slotId\": id,\n    \"startTime\": start_time,\n    \"endTime\": end_time\n  },\n  \"totalSlots\": $count(payload)\n}",
+                "tot": "jsonata"
+            }
+        ],
+        "x": 930,
+        "y": 320,
+        "wires": [
+            [
+                "df2f10bc66fc911a"
+            ]
+        ]
+    },
+    {
+        "id": "df2f10bc66fc911a",
+        "type": "http response",
+        "z": "tab-booking",
+        "name": "HTTP Response",
+        "statusCode": "200",
+        "headers": {},
+        "x": 1060,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "advisors-http-get",
+        "type": "http in",
+        "z": "7a504e5e0821d83a",
+        "name": "GET /api/advisors",
+        "url": "/api/advisors",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "swagger-advisors-doc",
+        "x": 770,
+        "y": 320,
+        "wires": [
+            [
+                "advisors-pg-query",
+                "advisor-metric-inc"
+            ]
+        ]
+    },
+    {
+        "id": "advisor-metric-inc",
+        "type": "change",
+        "z": "7a504e5e0821d83a",
+        "name": "Metric: inc",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"op\":\"inc\"}",
+                "tot": "json"
+            }
+        ],
+        "x": 890,
+        "y": 260,
+        "wires": [
+            [
+                "advisor-exporter-reqs"
+            ]
+        ]
+    },
+    {
+        "id": "advisor-exporter-reqs",
+        "type": "prometheus-exporter",
+        "z": "7a504e5e0821d83a",
+        "name": "Advisor Requests",
+        "metric": "prom-metric-advisors-reqs",
+        "x": 1010,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "advisors-catch-db-err",
+        "type": "catch",
+        "z": "7a504e5e0821d83a",
+        "name": "Catch DB Errors",
+        "scope": [
+            "advisors-pg-query"
+        ],
+        "uncaught": false,
+        "x": 760,
+        "y": 460,
+        "wires": [
+            [
+                "advisors-metric-inc-db-err"
+            ]
+        ]
+    },
+    {
+        "id": "advisors-metric-inc-db-err",
+        "type": "change",
+        "z": "7a504e5e0821d83a",
+        "name": "Metric: inc",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"op\":\"inc\"}",
+                "tot": "json"
+            }
+        ],
+        "x": 890,
+        "y": 520,
+        "wires": [
+            [
+                "advisors-exporter-db-err"
+            ]
+        ]
+    },
+    {
+        "id": "advisors-exporter-db-err",
+        "type": "prometheus-exporter",
+        "z": "7a504e5e0821d83a",
+        "name": "DB Errors",
+        "metric": "prom-metric-advisors-db-err",
+        "x": 1000,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "advisors-pg-query",
+        "type": "postgresql",
+        "z": "7a504e5e0821d83a",
+        "name": "Query Advisors",
+        "query": "SELECT id, name FROM advisor ORDER BY id;",
+        "postgreSQLConfig": "postgres-config-advisor",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 900,
+        "y": 380,
+        "wires": [
+            [
+                "advisors-format-response"
+            ]
+        ]
+    },
+    {
+        "id": "advisors-format-response",
+        "type": "change",
+        "z": "7a504e5e0821d83a",
+        "name": "Format Response",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{ \"advisors\": payload }",
+                "tot": "jsonata"
+            }
+        ],
+        "x": 1030,
+        "y": 320,
+        "wires": [
+            [
+                "advisors-http-response"
+            ]
+        ]
+    },
+    {
+        "id": "advisors-http-response",
+        "type": "http response",
+        "z": "7a504e5e0821d83a",
+        "name": "HTTP Response",
+        "statusCode": "200",
+        "headers": {},
+        "x": 1160,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "email-exporter-received",
+        "type": "prometheus-exporter",
+        "z": "195cd2c1ac237259",
+        "name": "Email Received",
+        "metric": "prom-metric-email-received",
+        "x": 500,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "email-exporter-sent",
+        "type": "prometheus-exporter",
+        "z": "195cd2c1ac237259",
+        "name": "Email Sent",
+        "metric": "prom-metric-email-sent",
+        "x": 1310,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "email-exporter-failed",
+        "type": "prometheus-exporter",
+        "z": "195cd2c1ac237259",
+        "g": "c51501eee8a0e7ab",
+        "name": "Email Failed",
+        "metric": "prom-metric-email-failed",
+        "x": 1310,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "33ceb70aa1abe473",
+        "type": "amqp-in",
+        "z": "195cd2c1ac237259",
+        "name": "Consume booking.confirmed",
+        "broker": "amqp-broker-config",
+        "prefetch": 1,
+        "noAck": false,
+        "exchangeName": "booking-exchange",
+        "exchangeType": "direct",
+        "exchangeRoutingKey": "booking.confirmed",
+        "exchangeDurable": true,
+        "queueName": "email-notification-queue",
+        "queueExclusive": false,
+        "queueDurable": true,
+        "queueAutoDelete": false,
+        "x": 220,
+        "y": 140,
+        "wires": [
+            [
+                "b7c3f4e1a2d5c6b7"
+            ]
+        ],
+        "info": "Consumes confirmed booking events from RabbitMQ."
+    },
+    {
+        "id": "b7c3f4e1a2d5c6b7",
+        "type": "template",
+        "z": "195cd2c1ac237259",
+        "g": "c51501eee8a0e7ab",
+        "name": "Build Email Payload",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n  \"to\": \"{{payload.customerEmail}}\",\n  \"subject\": \"Booking Confirmed - {{payload.startTime}}\",\n  \"body\": \"Dear {{payload.customerName}},\\n\\nYour appointment has been confirmed.\\n\\nBooking ID: {{payload.bookingId}}\\nAdvisor ID: {{payload.advisorId}}\\nTime: {{payload.startTime}} to {{payload.endTime}}\\n\\nBest regards,\\nAdvisor Booking System\"\n}",
+        "output": "str",
+        "x": 480,
+        "y": 140,
+        "wires": [
+            [
+                "d1e2f3a4b5c6d7e8",
+                "email-metric-inc-recv"
+            ]
+        ],
+        "info": "Builds the outbound email payload directly from the booking message."
+    },
+    {
+        "id": "d1e2f3a4b5c6d7e8",
+        "type": "function",
+        "z": "195cd2c1ac237259",
+        "g": "c51501eee8a0e7ab",
+        "name": "Attempt Email Delivery",
+        "func": "var maxRetries = 3;\nvar retryCount = Number(msg.emailRetryCount || 0);\nvar shouldFail = msg.emailSendError === true || msg.forceEmailFailure === true;\n\nif (!shouldFail) {\n    delete msg.emailRetryCount;\n    delete msg.delayTimeout;\n    return [msg, null, null];\n}\n\nif (retryCount < maxRetries - 1) {\n    msg.emailRetryCount = retryCount + 1;\n    msg.delayTimeout = Math.pow(2, retryCount) * 1000;\n    node.warn('Email send failed, retry #' + msg.emailRetryCount + ' in ' + (msg.delayTimeout / 1000) + 's');\n    return [null, null, msg];\n}\n\nmsg.emailRetryCount = retryCount + 1;\nmsg.error = {\n    message: 'Email send failed after ' + maxRetries + ' attempts'\n};\nreturn [null, msg, null];",
+        "outputs": 3,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 800,
+        "y": 140,
+        "wires": [
+            [
+                "356e639b68a5f9ce",
+                "email-metric-inc-sent"
+            ],
+            [
+                "email-failure-debug",
+                "email-metric-inc-failed"
+            ],
+            [
+                "email-retry-delay"
+            ]
+        ],
+        "info": "Retries failed email sends with exponential backoff."
+    },
+    {
+        "id": "email-metric-inc-failed",
+        "type": "change",
+        "z": "195cd2c1ac237259",
+        "g": "c51501eee8a0e7ab",
+        "name": "Metric: inc",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"op\":\"inc\"}",
+                "tot": "json"
+            }
+        ],
+        "x": 1070,
+        "y": 180,
+        "wires": [
+            [
+                "email-exporter-failed"
+            ]
+        ]
+    },
+    {
+        "id": "email-retry-delay",
+        "type": "delay",
+        "z": "195cd2c1ac237259",
+        "g": "c51501eee8a0e7ab",
+        "name": "Retry Email After Backoff",
+        "pauseType": "delayv",
+        "timeout": "2",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 810,
+        "y": 240,
+        "wires": [
+            [
+                "d1e2f3a4b5c6d7e8"
+            ]
+        ],
+        "info": "Pauses retry attempts before re-running the email send step."
+    },
+    {
+        "id": "email-failure-debug",
+        "type": "debug",
+        "z": "195cd2c1ac237259",
+        "g": "c51501eee8a0e7ab",
+        "name": "Email Delivery Failed",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "error",
+        "targetType": "msg",
+        "statusVal": "Email failed",
+        "statusType": "auto",
+        "x": 1100,
+        "y": 140,
+        "wires": [],
+        "info": "Logs exhausted email send attempts."
+    },
+    {
+        "id": "356e639b68a5f9ce",
+        "type": "debug",
+        "z": "195cd2c1ac237259",
+        "name": "Email Sent (Mock)",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "Email logged",
+        "statusType": "auto",
+        "x": 1090,
+        "y": 100,
+        "wires": [],
+        "info": "Outputs final outbound notification objects directly to the debugging sidebar panel to trace mock service deliveries."
+    },
+    {
+        "id": "email-metric-inc-recv",
+        "type": "change",
+        "z": "195cd2c1ac237259",
+        "name": "Metric: inc",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"op\":\"inc\"}",
+                "tot": "json"
+            }
+        ],
+        "x": 490,
+        "y": 200,
+        "wires": [
+            [
+                "email-exporter-received"
+            ]
+        ]
+    },
+    {
+        "id": "email-metric-inc-sent",
+        "type": "change",
+        "z": "195cd2c1ac237259",
+        "name": "Metric: inc",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"op\":\"inc\"}",
+                "tot": "json"
+            }
+        ],
+        "x": 1070,
+        "y": 60,
+        "wires": [
+            [
+                "email-exporter-sent"
+            ]
+        ]
+    },
+    {
+        "id": "ui-comment",
+        "type": "comment",
+        "z": "tab-ui",
+        "name": "Advisor Booking UI",
+        "info": "React + Ant Design UI.\nAll static files served from /data/ui/.",
+        "x": 180,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "ui-http-in",
+        "type": "http in",
+        "z": "tab-ui",
+        "name": "GET /ui/*",
+        "url": "/ui/*",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "swagger-ui-doc",
+        "x": 150,
+        "y": 100,
+        "wires": [
+            [
+                "ui-filename-change"
+            ]
+        ]
+    },
+    {
+        "id": "ui-http-in-root",
+        "type": "http in",
+        "z": "tab-ui",
+        "name": "GET /ui",
+        "url": "/ui",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "swagger-ui-doc",
+        "x": 150,
+        "y": 160,
+        "wires": [
+            [
+                "ui-filename-root-change"
+            ]
+        ]
+    },
+    {
+        "id": "ui-filename-root-change",
+        "type": "change",
+        "z": "tab-ui",
+        "name": "Set index.html",
+        "rules": [
+            {
+                "t": "set",
+                "p": "filename",
+                "pt": "msg",
+                "to": "/data/ui/index.html",
+                "tot": "str"
+            }
+        ],
+        "x": 380,
+        "y": 160,
+        "wires": [
+            [
+                "ui-read-file"
+            ]
+        ]
+    },
+    {
+        "id": "ui-filename-change",
+        "type": "change",
+        "z": "tab-ui",
+        "name": "Set File Path",
+        "rules": [
+            {
+                "t": "set",
+                "p": "filename",
+                "pt": "msg",
+                "to": "\"/data/ui/\" & ($exists(req.params.\"0\") ? (req.params.\"0\" != \"\" and req.params.\"0\" != \"/\" ? req.params.\"0\" : \"index.html\") : \"index.html\")",
+                "tot": "jsonata"
+            }
+        ],
+        "x": 380,
+        "y": 100,
+        "wires": [
+            [
+                "ui-read-file"
+            ]
+        ]
+    },
+    {
+        "id": "ui-read-file",
+        "type": "file in",
+        "z": "tab-ui",
+        "name": "Read File",
+        "filename": "",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": true,
+        "x": 580,
+        "y": 120,
+        "wires": [
+            [
+                "ui-http-response"
+            ]
+        ]
+    },
+    {
+        "id": "ui-http-response",
+        "type": "http response",
+        "z": "tab-ui",
+        "name": "HTTP Response",
+        "statusCode": "200",
+        "headers": {},
+        "x": 780,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "test-booking-inject",
+        "type": "inject",
+        "z": "tab-test",
+        "g": "test-group-booking",
+        "name": "Book Slot",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"advisorId\":1,\"customerName\":\"John Doe\",\"customerEmail\":\"john@example.com\",\"startTime\":\"2026-07-14 10:00:00\",\"endTime\":\"2026-07-14 11:00:00\"}",
+        "payloadType": "json",
+        "x": 150,
+        "y": 100,
+        "wires": [
+            [
+                "test-booking-http"
+            ]
+        ]
+    },
+    {
+        "id": "test-booking-http",
+        "type": "http request",
+        "z": "tab-test",
+        "g": "test-group-booking",
+        "name": "POST /api/bookings",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://node-red:1880/api/bookings",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 400,
+        "y": 100,
+        "wires": [
+            [
+                "test-booking-debug"
+            ]
+        ]
+    },
+    {
+        "id": "test-booking-debug",
+        "type": "debug",
+        "z": "tab-test",
+        "g": "test-group-booking",
+        "name": "Booking Response",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload.status",
+        "statusType": "msg",
+        "x": 660,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "test-avail-inject",
+        "type": "inject",
+        "z": "tab-test",
+        "g": "test-group-availability",
+        "name": "Check Availability",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 170,
+        "y": 220,
+        "wires": [
+            [
+                "test-avail-http"
+            ]
+        ]
+    },
+    {
+        "id": "test-avail-http",
+        "type": "http request",
+        "z": "tab-test",
+        "g": "test-group-availability",
+        "name": "GET /api/availability/1",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://node-red:1880/api/availability?advisorId=1&date=2026-07-14",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 420,
+        "y": 220,
+        "wires": [
+            [
+                "test-avail-debug"
+            ]
+        ]
+    },
+    {
+        "id": "test-avail-debug",
+        "type": "debug",
+        "z": "tab-test",
+        "g": "test-group-availability",
+        "name": "Availability Response",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload.totalSlots",
+        "statusType": "msg",
+        "x": 680,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "test-dup-inject",
+        "type": "inject",
+        "z": "tab-test",
+        "g": "test-group-duplicate",
+        "name": "Simulate Race (2x same slot)",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 210,
+        "y": 340,
+        "wires": [
+            [
+                "test-dup-fork"
+            ]
+        ]
+    },
+    {
+        "id": "test-dup-http-1",
+        "type": "http request",
+        "z": "tab-test",
+        "g": "test-group-duplicate",
+        "name": "Request 1",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://node-red:1880/api/bookings",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 580,
+        "y": 320,
+        "wires": [
+            [
+                "test-dup-debug-1"
+            ]
+        ]
+    },
+    {
+        "id": "test-dup-http-2",
+        "type": "http request",
+        "z": "tab-test",
+        "g": "test-group-duplicate",
+        "name": "Request 2",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://node-red:1880/api/bookings",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 590,
+        "y": 360,
+        "wires": [
+            [
+                "test-dup-debug-2"
+            ]
+        ]
+    },
+    {
+        "id": "test-dup-debug-1",
+        "type": "debug",
+        "z": "tab-test",
+        "g": "test-group-duplicate",
+        "name": "Response 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload.status || payload.error",
+        "statusType": "msg",
+        "x": 800,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "test-dup-debug-2",
+        "type": "debug",
+        "z": "tab-test",
+        "g": "test-group-duplicate",
+        "name": "Response 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload.status || payload.error",
+        "statusType": "msg",
+        "x": 800,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "inject-test-query",
+        "type": "inject",
+        "z": "tab-advisor",
+        "name": "Test Query",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 150,
+        "y": 200,
+        "wires": [
+            [
+                "postgres-query"
+            ]
+        ]
+    },
+    {
+        "id": "postgres-query",
+        "type": "postgresql",
+        "z": "tab-advisor",
+        "name": "Query Tables",
+        "query": "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'",
+        "postgreSQLConfig": "postgres-config-advisor",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 380,
+        "y": 200,
+        "wires": [
+            [
+                "debug-query-result"
+            ]
+        ]
+    },
+    {
+        "id": "debug-query-result",
+        "type": "debug",
+        "z": "tab-advisor",
+        "name": "Query Result",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 620,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "inject-set-value",
+        "type": "inject",
+        "z": "tab-advisor",
+        "name": "Set Value",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "test:key",
+        "payload": "Hello from Node-RED",
+        "payloadType": "str",
+        "x": 150,
+        "y": 340,
+        "wires": [
+            [
+                "redis-set"
+            ]
+        ]
+    },
+    {
+        "id": "redis-set",
+        "type": "redis-command",
+        "z": "tab-advisor",
+        "server": "redis-config-advisor",
+        "command": "set",
+        "name": "SET",
+        "topic": "",
+        "params": "[]",
+        "paramsType": "json",
+        "payloadType": "json",
+        "block": false,
+        "x": 380,
+        "y": 340,
+        "wires": [
+            [
+                "debug-redis-set"
+            ]
+        ]
+    },
+    {
+        "id": "debug-redis-set",
+        "type": "debug",
+        "z": "tab-advisor",
+        "name": "SET Result",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 620,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "inject-get-value",
+        "type": "inject",
+        "z": "tab-advisor",
+        "name": "Get Value",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "test:key",
+        "x": 150,
+        "y": 420,
+        "wires": [
+            [
+                "redis-get"
+            ]
+        ]
+    },
+    {
+        "id": "redis-get",
+        "type": "redis-command",
+        "z": "tab-advisor",
+        "server": "redis-config-advisor",
+        "command": "get",
+        "name": "GET",
+        "topic": "",
+        "params": "[]",
+        "paramsType": "json",
+        "payloadType": "json",
+        "block": false,
+        "x": 380,
+        "y": 420,
+        "wires": [
+            [
+                "debug-redis-get"
+            ]
+        ]
+    },
+    {
+        "id": "debug-redis-get",
+        "type": "debug",
+        "z": "tab-advisor",
+        "name": "GET Result",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 620,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "inject-publish",
+        "type": "inject",
+        "z": "tab-advisor",
+        "name": "Publish Message",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "test.routing.key",
+        "payload": "Hello from Node-RED",
+        "payloadType": "str",
+        "x": 150,
+        "y": 540,
+        "wires": [
+            [
+                "rabbitmq-producer"
+            ]
+        ]
+    },
+    {
+        "id": "rabbitmq-producer",
+        "type": "amqp-out",
+        "z": "tab-advisor",
+        "name": "Publish to RabbitMQ",
+        "broker": "amqp-broker-config",
+        "exchangeName": "test-exchange",
+        "exchangeType": "direct",
+        "exchangeRoutingKey": "test.routing.key",
+        "exchangeDurable": true,
+        "outputs": 0,
+        "x": 400,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "rabbitmq-consumer",
+        "type": "amqp-in",
+        "z": "tab-advisor",
+        "name": "Consume from RabbitMQ",
+        "broker": "amqp-broker-config",
+        "prefetch": 1,
+        "noAck": true,
+        "exchangeName": "test-exchange",
+        "exchangeType": "direct",
+        "exchangeRoutingKey": "test.routing.key",
+        "exchangeDurable": true,
+        "queueName": "test-queue",
+        "queueExclusive": false,
+        "queueDurable": true,
+        "queueAutoDelete": false,
+        "x": 180,
+        "y": 620,
+        "wires": [
+            [
+                "debug-amqp-subscribe"
+            ]
+        ]
+    },
+    {
+        "id": "debug-amqp-subscribe",
+        "type": "debug",
+        "z": "tab-advisor",
+        "name": "Received",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 620,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "db-init-comment",
+        "type": "comment",
+        "z": "tab-db-init",
+        "name": "Database Schema Initialization",
+        "info": "Creates tables and seeds sample data.\nClick Initialize DB to run.",
+        "x": 220,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "db-init-inject",
+        "type": "inject",
+        "z": "tab-db-init",
+        "name": "Initialize DB",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 150,
+        "y": 140,
+        "wires": [
+            [
+                "db-init-postgres"
+            ]
+        ]
+    },
+    {
+        "id": "db-init-postgres",
+        "type": "postgresql",
+        "z": "tab-db-init",
+        "name": "Create Tables",
+        "query": "CREATE TABLE IF NOT EXISTS advisor (\n    id SERIAL PRIMARY KEY,\n    name VARCHAR(255) NOT NULL,\n    email VARCHAR(255) NOT NULL UNIQUE\n);\n\nCREATE TABLE IF NOT EXISTS booking_slot (\n    id SERIAL PRIMARY KEY,\n    advisor_id INT NOT NULL REFERENCES advisor(id),\n    start_time TIMESTAMP NOT NULL,\n    end_time TIMESTAMP NOT NULL,\n    is_booked BOOLEAN DEFAULT FALSE,\n    UNIQUE(advisor_id, start_time, end_time)\n);\n\nCREATE TABLE IF NOT EXISTS booking (\n    id SERIAL PRIMARY KEY,\n    slot_id INT NOT NULL UNIQUE REFERENCES booking_slot(id),\n    advisor_id INT NOT NULL REFERENCES advisor(id),\n    customer_name VARCHAR(255) NOT NULL,\n    customer_email VARCHAR(255) NOT NULL,\n    graph_event_id VARCHAR(255),\n    created_at TIMESTAMP DEFAULT NOW()\n);",
+        "postgreSQLConfig": "postgres-config-advisor",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 400,
+        "y": 140,
+        "wires": [
+            [
+                "db-init-debug",
+                "db-seed-advisors"
+            ]
+        ]
+    },
+    {
+        "id": "db-init-debug",
+        "type": "debug",
+        "z": "tab-db-init",
+        "name": "Tables Created",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "Tables created",
+        "statusType": "auto",
+        "x": 620,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "db-seed-advisors",
+        "type": "postgresql",
+        "z": "tab-db-init",
+        "name": "Insert Advisors",
+        "query": "INSERT INTO advisor (name, email) VALUES\n    ('Advisor A', 'advisor.a@example.com'),\n    ('Advisor B', 'advisor.b@example.com')\nON CONFLICT (email) DO NOTHING;",
+        "postgreSQLConfig": "postgres-config-advisor",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 620,
+        "y": 140,
+        "wires": [
+            [
+                "db-seed-slots-function"
+            ]
+        ]
+    },
+    {
+        "id": "db-seed-slots-function",
+        "type": "function",
+        "z": "tab-db-init",
+        "name": "Generate Time Slots",
+        "func": "var slots = [];\nvar advisors = [1, 2];\nvar now = new Date();\n\nvar startDate = new Date(now);\nstartDate.setHours(9, 0, 0, 0);\nvar dayOfWeek = startDate.getDay();\nif (dayOfWeek === 0) startDate.setDate(startDate.getDate() + 1);\nif (dayOfWeek === 6) startDate.setDate(startDate.getDate() + 2);\nif (startDate.getHours() >= 9 && startDate.getMinutes() > 0) {\n    startDate.setDate(startDate.getDate() + 1);\n    startDate.setHours(9, 0, 0, 0);\n}\n\nfor (var d = 0; d < 5; d++) {\n    var slotDate = new Date(startDate);\n    slotDate.setDate(slotDate.getDate() + d);\n    if (slotDate.getDay() === 0 || slotDate.getDay() === 6) continue;\n    for (var h = 9; h < 17; h++) {\n        var start = new Date(slotDate);\n        start.setHours(h, 0, 0, 0);\n        var end = new Date(slotDate);\n        end.setHours(h + 1, 0, 0, 0);\n        var startStr = start.toISOString().replace('T', ' ').substring(0, 19);\n        var endStr = end.toISOString().replace('T', ' ').substring(0, 19);\n        for (var a = 0; a < advisors.length; a++) {\n            slots.push('(' + advisors[a] + ', \\'' + startStr + '\\', \\'' + endStr + '\\')');\n        }\n    }\n}\n\nif (slots.length === 0) {\n    msg.payload = { status: 'No business days found in next 5 days' };\n    return msg;\n}\n\nmsg.query = 'INSERT INTO booking_slot (advisor_id, start_time, end_time) VALUES\\n    ' + slots.join(',\\n    ') + '\\nON CONFLICT (advisor_id, start_time, end_time) DO NOTHING;';\ndelete msg.payload;\ndelete msg.params;\ndelete msg.queryParameters;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 870,
+        "y": 140,
+        "wires": [
+            [
+                "db-seed-slots-postgres"
+            ]
+        ]
+    },
+    {
+        "id": "db-seed-slots-postgres",
+        "type": "postgresql",
+        "z": "tab-db-init",
+        "name": "Insert Slots",
+        "query": "",
+        "postgreSQLConfig": "postgres-config-advisor",
+        "split": false,
+        "rowsPerMsg": 1,
+        "outputs": 1,
+        "x": 1100,
+        "y": 140,
+        "wires": [
+            [
+                "db-seed-debug"
+            ]
+        ]
+    },
+    {
+        "id": "db-seed-debug",
+        "type": "debug",
+        "z": "tab-db-init",
+        "name": "Slots Inserted",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "Done",
+        "statusType": "auto",
+        "x": 1320,
+        "y": 140,
+        "wires": []
+    }
+]

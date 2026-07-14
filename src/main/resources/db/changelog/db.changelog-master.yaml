@@ -1,0 +1,193 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-extensions
+      author: dev
+      changes:
+        - sql:
+            sql: CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+  - changeSet:
+      id: 002-create-advisors
+      author: dev
+      changes:
+        - createTable:
+            tableName: advisor
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+  - changeSet:
+      id: 003-create-booking-slots
+      author: dev
+      changes:
+        - createTable:
+            tableName: booking_slot
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: advisor_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: start_time
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: end_time
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_booked
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            tableName: booking_slot
+            columnNames: advisor_id, start_time, end_time
+            constraintName: uq_booking_slot_advisor_time
+        - addForeignKeyConstraint:
+            baseTableName: booking_slot
+            baseColumnNames: advisor_id
+            referencedTableName: advisor
+            referencedColumnNames: id
+            constraintName: fk_booking_slot_advisor
+        - createIndex:
+            tableName: booking_slot
+            indexName: idx_booking_slot_advisor_time_available
+            columns:
+              - column:
+                  name: advisor_id
+              - column:
+                  name: start_time
+              - column:
+                  name: is_booked
+
+  - changeSet:
+      id: 004-create-bookings
+      author: dev
+      changes:
+        - createTable:
+            tableName: booking
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: slot_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: advisor_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: customer_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: customer_email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: graph_event_id
+                  type: VARCHAR(255)
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: booking
+            baseColumnNames: slot_id
+            referencedTableName: booking_slot
+            referencedColumnNames: id
+            constraintName: fk_booking_slot
+        - addForeignKeyConstraint:
+            baseTableName: booking
+            baseColumnNames: advisor_id
+            referencedTableName: advisor
+            referencedColumnNames: id
+            constraintName: fk_booking_advisor
+
+  - changeSet:
+      id: 004b-remove-redundant-time-columns-from-booking
+      author: dev
+      preconditions:
+        - onFail: CONTINUE
+        - columnExists:
+            tableName: booking
+            columnName: slot_start_time
+      changes:
+        - dropColumn:
+            tableName: booking
+            columnName: slot_start_time
+        - dropColumn:
+            tableName: booking
+            columnName: slot_end_time
+
+  - changeSet:
+      id: 005-seed-advisors-and-slots
+      author: dev
+      changes:
+        - sql:
+            sql: |
+              INSERT INTO advisor (name, email) VALUES
+                  ('Advisor A', 'advisor.a@example.com'),
+                  ('Advisor B', 'advisor.b@example.com')
+              ON CONFLICT (email) DO NOTHING;
+        - sql:
+            sql: |
+              INSERT INTO booking_slot (advisor_id, start_time, end_time, is_booked)
+              SELECT a.advisor_id,
+                     s.start_time,
+                     s.end_time,
+                     false
+              FROM (VALUES (1), (2)) AS a(advisor_id)
+              CROSS JOIN (
+                  VALUES
+                      (CURRENT_DATE + TIME '09:00', CURRENT_DATE + TIME '10:00'),
+                      (CURRENT_DATE + TIME '10:00', CURRENT_DATE + TIME '11:00'),
+                      (CURRENT_DATE + TIME '11:00', CURRENT_DATE + TIME '12:00'),
+                      (CURRENT_DATE + TIME '13:00', CURRENT_DATE + TIME '14:00'),
+                      (CURRENT_DATE + TIME '14:00', CURRENT_DATE + TIME '15:00'),
+                      (CURRENT_DATE + TIME '15:00', CURRENT_DATE + TIME '16:00')
+              ) AS s(start_time, end_time)
+              WHERE NOT EXISTS (
+                  SELECT 1 FROM booking_slot bs
+                  WHERE bs.advisor_id = a.advisor_id
+                  AND bs.start_time = s.start_time
+                  AND bs.end_time = s.end_time
+              );

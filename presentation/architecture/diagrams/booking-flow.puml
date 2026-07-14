@@ -1,0 +1,53 @@
+@startuml
+skinparam sequenceMessageAlign center
+
+participant "Customer" as Customer
+participant "Website / Mobile App" as Channel
+participant "Booking Controller" as Controller
+participant "Booking Service" as Service
+database "Redis Cache" as Redis
+database "PostgreSQL" as DB
+participant "Calendar Service" as Calendar
+participant "Microsoft Graph API" as GraphAPI
+participant "Exchange Online" as Exchange
+queue "RabbitMQ" as MQ
+participant "Notification Service" as Notifier
+
+Customer -> Channel: Click free slot
+Channel -> Controller: POST /api/bookings
+Controller -> Service: createBooking(request)
+
+Service -> Redis: tryReserve(advisorId, startTime)
+Redis --> Service: OK (reserved with TTL 5 min)
+
+Service -> DB: SELECT ... FOR UPDATE (pessimistic lock)
+DB --> Service: Slot row (locked)
+
+Service -> Calendar: isSlotAvailable(advisorId, startTime, endTime)
+Calendar -> GraphAPI: GET /users/{id}/calendar/calendarView
+GraphAPI -> Exchange: Check calendar
+Exchange --> GraphAPI: Free
+GraphAPI --> Calendar: Available
+Calendar --> Service: true
+
+Service -> Calendar: createEvent(...)
+Calendar -> GraphAPI: POST /users/{id}/events
+GraphAPI -> Exchange: Create appointment
+Exchange --> GraphAPI: Event created
+GraphAPI --> Calendar: event-id-123
+Calendar --> Service: event-id-123
+
+Service -> DB: save(booking)
+Service -> DB: slot.setBooked(true)
+
+Service -> MQ: publish "booking.confirmed"
+Service --> Controller: BookingResponse (CONFIRMED)
+Controller --> Channel: 200 OK
+Channel --> Customer: "Booking confirmed!"
+
+MQ -> Notifier: Consume "booking.confirmed"
+Notifier -> GraphAPI: POST /users/{sender}/sendMail
+GraphAPI -> Exchange: Send email
+note right of Notifier: Retry 5 times with backoff\nif email fails (Dead Letter Queue)
+
+@enduml

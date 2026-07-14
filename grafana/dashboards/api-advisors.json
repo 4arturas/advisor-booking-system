@@ -1,0 +1,53 @@
+{
+  "title": "API Advisors",
+  "uid": "api-advisors",
+  "version": 4,
+  "panels": [
+    {
+      "title": "Advisor List Request Rate",
+      "type": "timeseries",
+      "datasource": "Prometheus",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "rate(nr_advisors_requests_total[5m])",
+          "legendFormat": "Requests/s"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "req/s",
+          "custom": { "showPoints": "never" },
+          "color": { "mode": "palette-classic" }
+        }
+      }
+    },
+    {
+      "title": "DB Errors",
+      "type": "stat",
+      "datasource": "Prometheus",
+      "gridPos": { "h": 6, "w": 6, "x": 0, "y": 8 },
+      "targets": [
+        {
+          "expr": "nr_advisors_db_errors_total",
+          "legendFormat": "Errors"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "red", "value": 1 }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "schemaVersion": 39,
+  "time": { "from": "now-1h", "to": "now" },
+  "timezone": "browser",
+  "editable": true
+}

@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1280, height=720">
+<title>Advisor Booking System — Working Prototype</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+<style>
+.slides h2 { color: #2c3e50; }
+.slides h3 { color: #34495e; }
+.slides li { font-size: 0.85em; }
+.slides .comparison { display: flex; gap: 2em; justify-content: center; }
+.slides .comparison > div { flex: 1; padding: 1em; border-radius: 0.5em; }
+.slides .bad { background: #fde8e8; }
+.slides .good { background: #e8fde8; }
+.slides table { font-size: 0.75em; }
+.slides .screenshot { max-height: 420px; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.slides .tight p { margin: 0.3em 0; }
+.reveal .code { font-size: 0.6em; }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- Title -->
+<section>
+<h1>Advisor Booking System</h1>
+<h3 style="color:#7f8c8d;">Working Prototype</h3>
+<p style="margin-top:2em;">Node-RED · PostgreSQL · Redis · RabbitMQ · React · Docker</p>
+<p>Build a running prototype first — executable API contracts from day one</p>
+</section>
+
+<!-- The Problem -->
+<section>
+<h2>The Problem</h2>
+<ol>
+<li>Appointments coordinated manually through phone calls and email</li>
+<li>Unnecessary delays for customers and advisors</li>
+<li>No centralized booking capability</li>
+<li>Risk of double-booking</li>
+</ol>
+<p class="fragment" style="font-size:1.4em; font-weight:bold; margin-top:1em;">I built a working prototype to solve this.</p>
+</section>
+
+<!-- My Approach -->
+<section>
+<h2>My Approach</h2>
+<blockquote style="font-size:1.2em; margin-bottom:1em;">Build a running prototype first. Then hand it over.</blockquote>
+<div class="comparison">
+<div class="bad">
+<h4>Traditional</h4>
+<ul>
+<li>Draw.io / Visio diagrams</li>
+<li>PDF specifications</li>
+<li>Handover documents</li>
+<li>Ambiguity and rework</li>
+</ul>
+</div>
+<div class="good">
+<h4>My tools</h4>
+<ul>
+<li><strong>Node-RED</strong> — running prototype</li>
+<li><strong>PostgreSQL</strong> — persistent storage</li>
+<li><strong>Redis</strong> — cache + race prevention</li>
+<li><strong>RabbitMQ</strong> — async email notifications</li>
+<li><strong>Docker</strong> — one command to run</li>
+</ul>
+</div>
+</div>
+</section>
+
+<!-- Practical Example -->
+<section>
+<h2>A Practical Example</h2>
+<p>A financial advisory company needs to let customers book meetings:</p>
+<ul>
+<li><strong>Website</strong> — public booking page</li>
+<li><strong>Mobile App</strong> — same API, different channel</li>
+<li><strong>Advisors</strong> — have calendars in Microsoft 365</li>
+</ul>
+<p style="margin-top:1em;">Requirements:</p>
+<ul>
+<li>Check advisor calendar availability</li>
+<li>Prevent double-booking</li>
+<li>Send confirmation email</li>
+</ul>
+<p style="margin-top:1em;">This is how I did it.</p>
+</section>
+
+<!-- System Overview -->
+<section>
+<section>
+<h2>System Overview</h2>
+<!-- TODO IMAGE: Screenshot of Docker Compose stack or architecture diagram -->
+<!-- Place at: presentation/prototype/screenshots/system-overview.png -->
+<img src="screenshots/system-overview.png" class="screenshot">
+<p style="font-size:0.7em; color:#7f8c8d;">12 Docker containers: PostgreSQL, Redis, RabbitMQ, Node-RED, Prometheus, Grafana, Loki, Promtail, exporters</p>
+</section>
+<section>
+<h2>Architecture</h2>
+<table>
+<thead><tr><th>Component</th><th>Technology</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td>Backend</td><td>Node-RED</td><td>API prototype + flow orchestration</td></tr>
+<tr><td>Database</td><td>PostgreSQL 16</td><td>Advisors, slots, bookings</td></tr>
+<tr><td>Cache</td><td>Redis 7</td><td>Availability cache + race prevention</td></tr>
+<tr><td>Queue</td><td>RabbitMQ 4</td><td>Async email notifications</td></tr>
+<tr><td>UI</td><td>React + Ant Design</td><td>Customer-facing booking interface</td></tr>
+<tr><td>Monitoring</td><td>Grafana + Prometheus</td><td>Metrics + dashboards</td></tr>
+<tr><td>Logging</td><td>Loki + Promtail</td><td>Centralized log aggregation</td></tr>
+</tbody>
+</table>
+</section>
+</section>
+
+<!-- Node-RED Flows -->
+<section>
+<section>
+<h2>Node-RED Flows</h2>
+<p>The prototype is built as visual flows in Node-RED.</p>
+<!-- TODO IMAGE: Screenshot of Node-RED editor showing all flow tabs -->
+<!-- Place at: presentation/prototype/screenshots/node-red-editor.png -->
+<img src="screenshots/node-red-editor.png" class="screenshot">
+</section>
+<section>
+<h2>API Booking Flow</h2>
+<p><code>POST /api/bookings</code> — Atomic CTE with <code>FOR UPDATE SKIP LOCKED</code></p>
+<!-- TODO IMAGE: Screenshot of API Booking flow tab in Node-RED -->
+<!-- Place at: presentation/prototype/screenshots/api-booking-flow.png -->
+<img src="screenshots/api-booking-flow.png" class="screenshot">
+<p style="font-size:0.7em; color:#7f8c8d;">Single atomic query handles locking, insertion, and slot marking — no race conditions</p>
+</section>
+<section>
+<h2>Availability Check Flow</h2>
+<p><code>GET /api/availability/:advisorId?date=YYYY-MM-DD</code></p>
+<!-- TODO IMAGE: Screenshot of Availability Check flow tab in Node-RED -->
+<!-- Place at: presentation/prototype/screenshots/availability-flow.png -->
+<img src="screenshots/availability-flow.png" class="screenshot">
+</section>
+<section>
+<h2>Database Init Flow</h2>
+<p>Creates tables and seeds 80 booking slots (Mon-Fri, 9-17h, 2 advisors)</p>
+<!-- TODO IMAGE: Screenshot of Database Init flow tab in Node-RED -->
+<!-- Place at: presentation/prototype/screenshots/database-init-flow.png -->
+<img src="screenshots/database-init-flow.png" class="screenshot">
+</section>
+</section>
+
+<!-- Race Condition Demo -->
+<section>
+<section>
+<h2>Race Condition Handling</h2>
+<div style="display:flex; gap:2em; margin-top:1em;">
+<div style="flex:1;">
+<p><strong>Atomic CTE Query:</strong></p>
+<pre><code class="language-sql" data-trim>
+WITH target_slot AS (
+  SELECT id FROM booking_slot
+  WHERE advisor_id = $1
+    AND start_time = $2
+    AND is_booked = false
+  FOR UPDATE SKIP LOCKED
+),
+reservation AS (
+  UPDATE booking_slot
+  SET is_booked = true
+  WHERE id IN (SELECT id FROM target_slot)
+  RETURNING id
+)
+INSERT INTO booking (...)
+SELECT ... WHERE EXISTS (
+  SELECT 1 FROM reservation
+)
+RETURNING id;
+</code></pre>
+</div>
+<div style="flex:1;">
+<p><strong>Three-Layer Protection:</strong></p>
+<ol>
+<li><strong>Redis TTL</strong> — Slot marked "reserved" for 5 min</li>
+<li><strong>DB Lock</strong> — <code>FOR UPDATE SKIP LOCKED</code></li>
+<li><strong>Unique Constraint</strong> — <code>(advisor_id, start_time, end_time)</code></li>
+</ol>
+</div>
+</div>
+</section>
+<section>
+<h2>What Customer A Sees (Wins)</h2>
+<div class="good">
+<ol>
+<li>Slot reserved in Redis</li>
+<li>Database row locked</li>
+<li>Calendar event created</li>
+<li>Booking saved to PostgreSQL</li>
+<li>Email published to RabbitMQ</li>
+<li><strong>"Booking confirmed!"</strong></li>
+</ol>
+</div>
+</section>
+<section>
+<h2>What Customer B Sees (Loses)</h2>
+<div class="bad">
+<ol>
+<li>Sees slot as "reserved" in Redis</li>
+<li>Waits for database lock</li>
+<li>Slot now marked as booked</li>
+<li><strong>"Sorry, this time slot was just taken. Please choose another."</strong></li>
+</ol>
+</div>
+</section>
+</section>
+
+<!-- UI -->
+<section>
+<section>
+<h2>Customer UI</h2>
+<p>React + Ant Design single-page app served from Node-RED</p>
+<!-- TODO IMAGE: Screenshot of the React booking UI at localhost:1880/ui/ -->
+<!-- Place at: presentation/prototype/screenshots/react-ui.png -->
+<img src="screenshots/react-ui.png" class="screenshot">
+</section>
+<section>
+<h2>UI Features</h2>
+<div class="comparison">
+<div>
+<h4>Availability Check</h4>
+<ul>
+<li>Select advisor (A or B)</li>
+<li>Pick a date</li>
+<li>See available slots with times</li>
+</ul>
+</div>
+<div>
+<h4>Booking Form</h4>
+<ul>
+<li>Choose advisor</li>
+<li>Enter name and email</li>
+<li>Select date and time</li>
+<li>Submit → Instant confirmation</li>
+</ul>
+</div>
+</div>
+</section>
+</section>
+
+<!-- Email Notification -->
+<section>
+<h2>Email Notification Service</h2>
+<div style="display:flex; gap:2em; margin-top:1em;">
+<div style="flex:1;">
+<p><strong>Flow:</strong></p>
+<ol>
+<li>Booking confirmed → publish to <code>booking-exchange</code></li>
+<li>Consumer reads from <code>email-notification-queue</code></li>
+<li>Sends confirmation email via Microsoft Graph API</li>
+<li>Success: acknowledge message</li>
+<li>Failure: retry with exponential backoff</li>
+</ol>
+</div>
+<div style="flex:1;">
+<p><strong>Retry Strategy:</strong></p>
+<ul>
+<li>Attempt 1: 4 seconds</li>
+<li>Attempt 2: 8 seconds</li>
+<li>Attempt 3: 16 seconds</li>
+<li>All failed → Dead Letter Queue</li>
+</ul>
+<p style="margin-top:1em;"><strong>Prometheus Metrics:</strong></p>
+<ul>
+<li><code>nr_email_received_total</code></li>
+<li><code>nr_email_sent_total</code></li>
+<li><code>nr_email_retry_total</code></li>
+<li><code>nr_email_dlq_total</code></li>
+</ul>
+</div>
+</div>
+<!-- TODO IMAGE: Screenshot of RabbitMQ management UI showing queues -->
+<!-- Place at: presentation/prototype/screenshots/rabbitmq-ui.png -->
+</section>
+
+<!-- Monitoring -->
+<section>
+<section>
+<h2>Monitoring Stack</h2>
+<div class="comparison">
+<div>
+<h4>Metrics</h4>
+<ul>
+<li><strong>Prometheus</strong> — scrapes /metrics endpoints</li>
+<li><strong>Grafana</strong> — 8 pre-built dashboards</li>
+<li>PostgreSQL, Redis, RabbitMQ exporters</li>
+</ul>
+</div>
+<div>
+<h4>Logs</h4>
+<ul>
+<li><strong>Loki</strong> — log aggregation</li>
+<li><strong>Promtail</strong> — Docker log collection</li>
+<li><strong>Grafana</strong> — log exploration</li>
+</ul>
+</div>
+</div>
+<!-- TODO IMAGE: Screenshot of Grafana dashboard showing booking metrics -->
+<!-- Place at: presentation/prototype/screenshots/grafana-dashboard.png -->
+</section>
+<section>
+<h2>Grafana Dashboards</h2>
+<p>8 pre-configured dashboards:</p>
+<table>
+<thead><tr><th>Dashboard</th><th>Metrics</th></tr></thead>
+<tbody>
+<tr><td>System Health</td><td>CPU, memory, disk</td></tr>
+<tr><td>PostgreSQL</td><td>Connections, queries, locks</td></tr>
+<tr><td>Redis</td><td>Hit rate, memory, commands</td></tr>
+<tr><td>RabbitMQ</td><td>Queues, messages, consumers</td></tr>
+<tr><td>API Booking</td><td>Request rate, latency, errors</td></tr>
+<tr><td>API Availability</td><td>Request rate, latency</td></tr>
+<tr><td>API Advisors</td><td>Request rate, latency</td></tr>
+<tr><td>Email Notification</td><td>Sent, retry, DLQ counts</td></tr>
+</tbody>
+</table>
+<!-- TODO IMAGE: Screenshot of multiple Grafana dashboards -->
+<!-- Place at: presentation/prototype/screenshots/grafana-dashboards.png -->
+</section>
+</section>
+
+<!-- Try It Yourself -->
+<section>
+<section>
+<h2>Try It Yourself</h2>
+<pre><code class="language-bash" data-trim>
+git clone https://github.com/4arturas/advisor-booking-system.git
+cd advisor-booking-system
+docker compose up --build
+</code></pre>
+<table style="margin-top:1em;">
+<thead><tr><th>Service</th><th>Address</th></tr></thead>
+<tbody>
+<tr><td>Node-RED Editor</td><td><code>http://localhost:1880</code></td></tr>
+<tr><td>Booking UI</td><td><code>http://localhost:1880/ui/</code></td></tr>
+<tr><td>Grafana</td><td><code>http://localhost:3000</code></td></tr>
+<tr><td>RabbitMQ</td><td><code>http://localhost:15672</code></td></tr>
+<tr><td>Prometheus</td><td><code>http://localhost:9090</code></td></tr>
+</tbody>
+</table>
+</section>
+<section>
+<h2>Initial Setup</h2>
+<ol>
+<li>Open Node-RED editor at <code>http://localhost:1880</code></li>
+<li>Go to "Database Init" tab</li>
+<li>Click the "Initialize DB" inject button</li>
+<li>Check debug sidebar for "Tables Created" and "Slots Inserted"</li>
+</ol>
+<h3 style="margin-top:1.5em;">Test the API</h3>
+<pre><code class="language-bash" data-trim>
+# Check availability
+curl http://localhost:1880/api/availability/1?date=2026-07-14
+
+# Book a slot
+curl -X POST http://localhost:1880/api/bookings \
+  -H "Content-Type: application/json" \
+  -d '{"advisorId":1,"customerName":"John Doe","customerEmail":"john@example.com","slotId":1}'
+</code></pre>
+</section>
+</section>
+
+<!-- Key Difference -->
+<section>
+<h2>The Key Difference</h2>
+<div class="comparison">
+<div class="bad">
+<h3>How most architects work</h3>
+<ul>
+<li>Draw static diagrams</li>
+<li>Write a specification</li>
+<li>Hand over documents</li>
+<li>Changes are slow</li>
+<li>Ambiguity and rework</li>
+</ul>
+</div>
+<div class="good">
+<h3>How I work</h3>
+<ul>
+<li><strong>Build a running prototype</strong></li>
+<li><strong>Write executable API contracts</strong></li>
+<li><strong>Hand over a working system</strong></li>
+<li><strong>Change the flow, click deploy</strong></li>
+<li><strong>Tests pass = correct</strong></li>
+</ul>
+</div>
+</div>
+</section>
+
+<!-- Thank You -->
+<section>
+<h1>Thank You</h1>
+<p style="margin-top:1em;">Repository: <a href="https://github.com/4arturas/advisor-booking-system">github.com/4arturas/advisor-booking-system</a></p>
+<p style="color:#7f8c8d; margin-top:0.5em;">Node-RED · PostgreSQL · Redis · RabbitMQ · React · Docker</p>
+<p style="margin-top:2em; font-size:1.4em;">Questions?</p>
+</section>
+
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script>
+Reveal.initialize({
+  width: 1280,
+  height: 720,
+  plugins: [RevealHighlight],
+  slideNumber: true,
+  hash: true,
+  transition: 'slide',
+  backgroundTransition: 'fade'
+});
+</script>
+</body>
+</html>

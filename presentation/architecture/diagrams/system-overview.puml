@@ -1,0 +1,64 @@
+@startuml
+skinparam backgroundColor #FEFEFE
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 14
+skinparam arrowThickness 2
+skinparam componentStyle rectangle
+
+skinparam component {
+  BackgroundColor<<channel>> #E8F5E9
+  BorderColor<<channel>> #4CAF50
+  BackgroundColor<<service>> #FFF3E0
+  BorderColor<<service>> #FF9800
+  BackgroundColor<<storage>> #F3E5F5
+  BorderColor<<storage>> #9C27B0
+  BackgroundColor<<external>> #FFEBEE
+  BorderColor<<external>> #F44336
+  BackgroundColor<<queue>> #E0F7FA
+  BorderColor<<queue>> #00BCD4
+  BackgroundColor<<monitor>> #F1F8E9
+  BorderColor<<monitor>> #8BC34A
+}
+
+title Advisor Booking System — Architecture Overview
+
+cloud "Customer Channels" as Channels {
+  component "Website\n(Public)" as Website
+  component "Mobile App" as MobileApp
+}
+
+node "Booking Service\n(Spring Boot 4.1 / Java 25)" as BookingService {
+  component "BookingController\n(REST Endpoints)" as Controller
+  component "NotificationService\n(Email)" as NotificationService
+}
+
+database "PostgreSQL\n(Advisors, Slots, Bookings)" as PostgreSQL
+database "Redis\n(Cache + Lock)" as Redis
+queue "RabbitMQ\n(Async Tasks)" as RabbitMQ
+
+cloud "Microsoft 365" as M365 {
+  component "Microsoft Graph API\n(Calendar + Email)" as GraphAPI
+}
+
+node "Monitoring" as Monitoring {
+  component "Prometheus\n(Metrics)" as Prometheus
+  component "Grafana\n(Dashboards)" as Grafana
+  component "Loki + Promtail\n(Logs)" as Loki
+}
+
+' Connections
+Website -down-> Controller : HTTPS
+MobileApp -down-> Controller : HTTPS
+Controller -down-> BookingService : Process
+BookingService -down-> Redis : Check/Reserve
+BookingService -down-> PostgreSQL : Lock & Save
+BookingService -down-> RabbitMQ : Publish Event
+BookingService -down-> GraphAPI : Check Calendar
+RabbitMQ -down-> NotificationService : Consume
+NotificationService -down-> GraphAPI : Send Email
+
+BookingService -down-> Prometheus : /metrics
+Prometheus -right-> Grafana : Query
+Loki ..> Grafana : Logs
+
+@enduml

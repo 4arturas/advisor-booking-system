@@ -1,0 +1,81 @@
+{
+  "title": "Redis Health",
+  "uid": "redis-health",
+  "version": 2,
+  "panels": [
+    {
+      "title": "Redis Health",
+      "type": "stat",
+      "datasource": "Prometheus",
+      "gridPos": { "h": 5, "w": 4, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "redis_up",
+          "legendFormat": "Up"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "thresholds": {
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "green", "value": 1 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "title": "Used Memory",
+      "type": "gauge",
+      "datasource": "Prometheus",
+      "gridPos": { "h": 5, "w": 6, "x": 4, "y": 0 },
+      "targets": [
+        {
+          "expr": "redis_memory_used_bytes",
+          "legendFormat": "Used"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "min": 0,
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 52428800 },
+              { "color": "red", "value": 104857600 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "title": "Connected Clients",
+      "type": "stat",
+      "datasource": "Prometheus",
+      "gridPos": { "h": 5, "w": 4, "x": 10, "y": 0 },
+      "targets": [
+        {
+          "expr": "redis_connected_clients",
+          "legendFormat": "Clients"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "schemaVersion": 39,
+  "time": { "from": "now-1h", "to": "now" },
+  "timezone": "browser",
+  "editable": true
+}

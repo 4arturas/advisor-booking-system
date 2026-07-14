@@ -1,0 +1,78 @@
+{
+  "title": "RabbitMQ Health",
+  "uid": "rabbitmq-health",
+  "version": 2,
+  "panels": [
+    {
+      "title": "RabbitMQ Health",
+      "type": "stat",
+      "datasource": "Prometheus",
+      "gridPos": { "h": 5, "w": 4, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "rabbitmq_queue_messages_ready > -1 or on() vector(1)",
+          "legendFormat": "Up"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "title": "Connections",
+      "type": "stat",
+      "datasource": "Prometheus",
+      "gridPos": { "h": 5, "w": 4, "x": 4, "y": 0 },
+      "targets": [
+        {
+          "expr": "rabbitmq_connections_open",
+          "legendFormat": "Open"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "title": "Messages Ready vs Unacked",
+      "type": "timeseries",
+      "datasource": "Prometheus",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 5 },
+      "targets": [
+        {
+          "expr": "rabbitmq_queue_messages_ready",
+          "legendFormat": "Ready"
+        },
+        {
+          "expr": "rabbitmq_queue_messages_unacked",
+          "legendFormat": "Unacked"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "custom": { "showPoints": "never" },
+          "color": { "mode": "palette-classic" }
+        }
+      }
+    }
+  ],
+  "schemaVersion": 39,
+  "time": { "from": "now-1h", "to": "now" },
+  "timezone": "browser",
+  "editable": true
+}

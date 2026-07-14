@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1280, height=720">
+<title>Advisor Booking System — Solution Architecture</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+<style>
+.slides h2 { color: #2c3e50; }
+.slides h3 { color: #34495e; }
+.slides li { font-size: 0.85em; }
+.slides .comparison { display: flex; gap: 2em; justify-content: center; }
+.slides .comparison > div { flex: 1; padding: 1em; border-radius: 0.5em; }
+.slides .bad { background: #fde8e8; }
+.slides .good { background: #e8fde8; }
+.slides table { font-size: 0.75em; }
+.slides .screenshot { max-height: 420px; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.slides .tight p { margin: 0.3em 0; }
+.reveal .code { font-size: 0.6em; }
+.slides .architecture-box { background: #f8f9fa; border-left: 4px solid #3498db; padding: 0.5em 1em; margin: 0.5em 0; font-size: 0.8em; }
+.slides .highlight { background: #fff3cd; padding: 0.3em 0.5em; border-radius: 4px; }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- Title -->
+<section>
+<h1>Advisor Booking System</h1>
+<h3 style="color:#7f8c8d;">Solution Architecture</h3>
+<p style="margin-top:2em;">Java 25 · Spring Boot 4.1 · PostgreSQL · Redis · RabbitMQ · Microsoft Graph API</p>
+<p>Preventing double-booking in a financial advisory environment</p>
+</section>
+
+<!-- The Problem -->
+<section>
+<h2>The Problem</h2>
+<p>A financial advisory company needs to improve customer experience:</p>
+<ol>
+<li class="fragment">Appointments coordinated manually via phone calls and email</li>
+<li class="fragment">Unnecessary delays for customers and advisors</li>
+<li class="fragment">No centralized booking capability</li>
+<li class="fragment">Risk of double-booking when multiple customers try the same slot</li>
+</ol>
+<p class="fragment" style="font-size:1.2em; font-weight:bold; margin-top:1em;">Goal: Let customers book directly from website and mobile app.</p>
+</section>
+
+<!-- Solution Overview -->
+<section>
+<h2>1. Solution Overview</h2>
+<div class="comparison">
+<div>
+<h4>Architecture Style</h4>
+<ul>
+<li><strong>Modular Monolith</strong> — simple, cheap to run, easy to maintain</li>
+<li>Can split into microservices later if needed</li>
+</ul>
+</div>
+<div>
+<h4>Key Technologies</h4>
+<table>
+<thead><tr><th>Component</th><th>Technology</th></tr></thead>
+<tbody>
+<tr><td>Backend</td><td>Java 25 + Spring Boot 4.1</td></tr>
+<tr><td>Database</td><td>PostgreSQL</td></tr>
+<tr><td>Cache</td><td>Redis</td></tr>
+<tr><td>Queue</td><td>RabbitMQ</td></tr>
+<tr><td>Calendar</td><td>Microsoft Graph API</td></tr>
+<tr><td>Email</td><td>Microsoft Graph API</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+
+<!-- Main Components -->
+<section>
+<h2>Main Java Components</h2>
+<div class="comparison">
+<div>
+<h4>Core Services</h4>
+<ul>
+<li><strong>BookingController</strong> — REST endpoints</li>
+<li><strong>BookingService</strong> — Core logic</li>
+<li><strong>CalendarService</strong> — Microsoft Graph API</li>
+<li><strong>NotificationService</strong> — Email sending</li>
+</ul>
+</div>
+<div>
+<h4>Data & Events</h4>
+<ul>
+<li><strong>BookingRepository</strong> — PostgreSQL access</li>
+<li><strong>AvailabilityCacheService</strong> — Redis cache</li>
+<li><strong>BookingEventPublisher</strong> — RabbitMQ publish</li>
+<li><strong>BookingEventHandler</strong> — Async email</li>
+</ul>
+</div>
+</div>
+</section>
+
+<!-- Architecture Diagram -->
+<section>
+<section>
+<h2>2. Architecture Diagram</h2>
+<!-- TODO IMAGE: Generate from presentation/architecture/diagrams/system-overview.puml -->
+<!-- Run: plantuml -tpng system-overview.puml -->
+<img src="diagrams/system-overview.png" style="max-height:500px;">
+<p style="font-size:0.7em; color:#7f8c8d;">Website + Mobile App → API Gateway → Booking Service → PostgreSQL + Redis + RabbitMQ + Microsoft Graph API</p>
+</section>
+<section>
+<h2>Step-by-Step Flow</h2>
+<ol>
+<li><strong>Customer</strong> clicks free slot on Website or Mobile App</li>
+<li><strong>API Gateway</strong> routes request to Booking Service</li>
+<li><strong>Booking Service</strong> checks Redis cache (fast check)</li>
+<li><strong>Booking Service</strong> locks slot in DB: <code>SELECT ... FOR UPDATE</code></li>
+<li><strong>Booking Service</strong> calls Microsoft Graph API to verify calendar</li>
+<li><strong>Booking Service</strong> saves booking to PostgreSQL</li>
+<li><strong>Booking Service</strong> publishes "booking.confirmed" to RabbitMQ</li>
+<li><strong>Notification Service</strong> consumes message, sends email</li>
+<li>Customer sees: <strong>"Booking confirmed!"</strong></li>
+</ol>
+</section>
+</section>
+
+<!-- Race Conditions -->
+<section>
+<section>
+<h2>3. Handling Race Conditions</h2>
+<div class="architecture-box">
+<strong>The Problem:</strong> Customer A books Advisor X at 10:00. Customer B books the same advisor milliseconds later. Both see the slot as free.
+</div>
+<h4>Three-Layer Protection:</h4>
+<ol>
+<li class="fragment"><strong>Redis TTL (5 min)</strong> — Slot marked as "reserved" immediately. Other customers see it as busy.</li>
+<li class="fragment"><strong>Database Pessimistic Lock</strong> — <code>SELECT ... FOR UPDATE</code> locks the row. Customer B must wait.</li>
+<li class="fragment"><strong>Unique Constraint</strong> — <code>(advisor_id, start_time, end_time)</code> prevents duplicates at DB level.</li>
+</ol>
+</section>
+<section>
+<h2>Race Condition — What User Sees</h2>
+<div class="comparison">
+<div class="good">
+<h4>Customer A (Wins)</h4>
+<ul>
+<li>Slot reserved in Redis</li>
+<li>DB row locked</li>
+<li>Calendar event created</li>
+<li>Booking saved</li>
+<li>Email sent</li>
+<li><strong>"Booking confirmed!"</strong></li>
+</ul>
+</div>
+<div class="bad">
+<h4>Customer B (Loses)</h4>
+<ul>
+<li>Sees slot as "reserved" in Redis</li>
+<li>Waits for DB lock</li>
+<li>Slot now marked as booked</li>
+<li><strong>"Sorry, this time slot was just taken."</strong></li>
+</ul>
+</div>
+</div>
+</section>
+</section>
+
+<!-- Error Handling -->
+<section>
+<section>
+<h2>4. Error Handling</h2>
+<p>Three scenarios the system must handle gracefully:</p>
+</section>
+<section>
+<h2>Scenario A: Calendar Service Unavailable</h2>
+<div class="comparison">
+<div class="bad">
+<h4>Customer Experience</h4>
+<p>"We are having trouble checking the calendar. Please try again."</p>
+</div>
+<div class="good">
+<h4>System Response</h4>
+<ul>
+<li><strong>Log:</strong> <code>ERROR - CalendarService - Graph API returned 503</code></li>
+<li><strong>Retry:</strong> 3 attempts, 1-second delay between</li>
+<li><strong>If still failing:</strong> Booking rejected, slot released</li>
+</ul>
+</div>
+</div>
+</section>
+<section>
+<h2>Scenario B: Database Unavailable</h2>
+<div class="comparison">
+<div class="bad">
+<h4>Customer Experience</h4>
+<p>"System is under maintenance. Please try again later."</p>
+</div>
+<div class="good">
+<h4>System Response</h4>
+<ul>
+<li><strong>Log:</strong> <code>CRITICAL - DatabaseConnection - Cannot connect</code></li>
+<li><strong>Retry:</strong> No — cannot safely process bookings</li>
+<li><strong>Alert:</strong> Health check notifies team immediately</li>
+</ul>
+</div>
+</div>
+</section>
+<section>
+<h2>Scenario C: Email Fails to Send</h2>
+<div class="comparison">
+<div class="bad">
+<h4>Customer Experience</h4>
+<p>Still sees <strong>"Booking confirmed!"</strong> — booking is saved regardless.</p>
+</div>
+<div class="good">
+<h4>System Response</h4>
+<ul>
+<li><strong>Log:</strong> <code>WARN - NotificationService - Failed to send email</code></li>
+<li><strong>Retry:</strong> RabbitMQ retries 5 times with exponential backoff</li>
+<li><strong>DLQ:</strong> Failed messages go to dead letter queue for manual review</li>
+</ul>
+</div>
+</div>
+</section>
+</section>
+
+<!-- Scalability -->
+<section>
+<section>
+<h2>5. Scalability & Future Growth</h2>
+<div class="architecture-box">
+<strong>Target:</strong> 500,000 bookings/month across 2,000 advisors<br>
+<strong>Load:</strong> ~700 bookings/hour = ~0.2 bookings/second (low load)
+</div>
+</section>
+<section>
+<h2>Scaling Strategy</h2>
+<table>
+<thead><tr><th>Scenario</th><th>Solution</th></tr></thead>
+<tbody>
+<tr><td>More bookings</td><td>Horizontal scaling — add Booking Service instances behind API Gateway</td></tr>
+<tr><td>More advisors</td><td>No change needed — advisors are just data in the database</td></tr>
+<tr><td>More channels</td><td>Add new channel (e.g., WhatsApp) — it calls the same API</td></tr>
+<tr><td>Traffic spikes</td><td>Auto-scale containers on Azure/AWS based on CPU or request count</td></tr>
+</tbody>
+</table>
+<h4 style="margin-top:1em;">Database Scaling</h4>
+<ul>
+<li>Start: Single PostgreSQL with <strong>connection pooling</strong> (HikariCP)</li>
+<li>Later: <strong>Read replicas</strong> for reporting, <strong>sharding</strong> by advisor ID</li>
+</ul>
+</section>
+</section>
+
+<!-- Monitoring -->
+<section>
+<h2>Monitoring</h2>
+<div class="comparison">
+<div>
+<h4>What to Monitor</h4>
+<ul>
+<li>Booking success rate (target: > 99.5%)</li>
+<li>Average booking time (target: < 2s)</li>
+<li>Email send success rate</li>
+<li>Calendar API response time</li>
+<li>Database connection pool usage</li>
+</ul>
+</div>
+<div>
+<h4>Tools</h4>
+<table>
+<thead><tr><th>What</th><th>Tool</th></tr></thead>
+<tbody>
+<tr><td>Metrics</td><td>Prometheus + Grafana</td></tr>
+<tr><td>Logs</td><td>Loki + Promtail</td></tr>
+<tr><td>Alerts</td><td>Grafana Alerting</td></tr>
+<tr><td>Health</td><td>/actuator/health (30s checks)</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- TODO IMAGE: Screenshot of Grafana dashboard showing booking metrics -->
+<!-- Place at: presentation/architecture/screenshots/grafana-dashboard.png -->
+</section>
+
+<!-- Key Difference -->
+<section>
+<h2>Architecture Decisions</h2>
+<div class="comparison">
+<div class="bad">
+<h3>Why Not Microservices?</h3>
+<ul>
+<li>Overkill for this scale (0.2 bookings/sec)</li>
+<li>More operational complexity</li>
+<li>Harder to debug across services</li>
+</ul>
+</div>
+<div class="good">
+<h3>Why Modular Monolith?</h3>
+<ul>
+<li>Simple to deploy and monitor</li>
+<li>Cheap to run (single container)</li>
+<li>Easy to split later if needed</li>
+<li>Clear module boundaries for future extraction</li>
+</ul>
+</div>
+</div>
+</section>
+
+<!-- Thank You -->
+<section>
+<h1>Thank You</h1>
+<p style="margin-top:1em;">Repository: <a href="https://github.com/4arturas/advisor-booking-system">github.com/4arturas/advisor-booking-system</a></p>
+<p style="color:#7f8c8d; margin-top:0.5em;">Java 25 · Spring Boot 4.1 · Node-RED · PostgreSQL · Redis · RabbitMQ · Docker</p>
+<p style="margin-top:2em; font-size:1.4em;">Questions?</p>
+</section>
+
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script>
+Reveal.initialize({
+  width: 1280,
+  height: 720,
+  plugins: [RevealHighlight],
+  slideNumber: true,
+  hash: true,
+  transition: 'slide',
+  backgroundTransition: 'fade'
+});
+</script>
+</body>
+</html>

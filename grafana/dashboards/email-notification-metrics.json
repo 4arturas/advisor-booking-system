@@ -1,0 +1,65 @@
+{
+  "title": "Email Notification Service",
+  "uid": "email-notification",
+  "version": 2,
+  "panels": [
+    {
+      "title": "Message Lifecycle",
+      "type": "timeseries",
+      "datasource": "Prometheus",
+      "gridPos": { "h": 8, "w": 16, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "rate(nr_email_received_total[5m])",
+          "legendFormat": "Received"
+        },
+        {
+          "expr": "rate(nr_email_sent_total[5m])",
+          "legendFormat": "Sent"
+        },
+        {
+          "expr": "rate(nr_email_dlq_total[5m])",
+          "legendFormat": "DLQ"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "custom": {
+            "showPoints": "never",
+            "fillOpacity": 20,
+            "stacking": { "mode": "normal" }
+          }
+        }
+      }
+    },
+    {
+      "title": "Total Retries",
+      "type": "stat",
+      "datasource": "Prometheus",
+      "gridPos": { "h": 6, "w": 6, "x": 0, "y": 8 },
+      "targets": [
+        {
+          "expr": "nr_email_retry_total",
+          "legendFormat": "Retries"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 10 },
+              { "color": "red", "value": 50 }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "schemaVersion": 39,
+  "time": { "from": "now-1h", "to": "now" },
+  "timezone": "browser",
+  "editable": true
+}

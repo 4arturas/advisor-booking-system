@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Advisor Booking System — Assignment Presentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+<style>
+:root {
+  --bg: #f6f1e8;
+  --ink: #1f2937;
+  --muted: #5b6574;
+  --accent: #0f766e;
+  --accent-2: #8b5cf6;
+  --card: #ffffff;
+  --line: rgba(31, 41, 55, 0.12);
+}
+html, body, .reveal { background: radial-gradient(circle at top left, #fff8ee 0, #f6f1e8 42%, #edf2f7 100%); }
+.reveal { font-family: 'Inter', sans-serif; color: var(--ink); }
+.reveal h1, .reveal h2, .reveal h3 { letter-spacing: -0.03em; }
+.reveal h1 { font-size: 2.2em; color: var(--ink); }
+.reveal h2 { color: var(--ink); }
+.reveal p, .reveal li { color: var(--ink); }
+.deck-shell { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 1rem; align-items: center; }
+.hero { background: linear-gradient(135deg, rgba(15, 118, 110, 0.14), rgba(139, 92, 246, 0.10)); border: 1px solid var(--line); border-radius: 24px; padding: 1.3rem 1.4rem; box-shadow: 0 20px 55px rgba(15, 23, 42, 0.08); }
+.hero h1 { margin-bottom: 0.4rem; }
+.hero .subtitle { color: var(--muted); font-size: 0.76em; }
+.hero .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+.chip { padding: 0.35rem 0.65rem; background: rgba(255,255,255,0.72); border: 1px solid var(--line); border-radius: 999px; font-size: 0.5em; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 1rem 1.1rem; box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06); }
+.card h3 { margin-top: 0; margin-bottom: 0.55rem; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.85rem; }
+.small { font-size: 0.62em; color: var(--muted); }
+.reveal ul { margin: 0.35rem 0 0 1.1rem; }
+.reveal li { margin: 0.24rem 0; }
+.mermaid-box { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 0.8rem; }
+.kpi { font-size: 1.1em; font-weight: 700; color: var(--accent); }
+.badge { display: inline-block; padding: 0.18rem 0.5rem; border-radius: 999px; background: rgba(15,118,110,0.12); color: var(--accent); font-size: 0.48em; margin-bottom: 0.45rem; }
+.note { margin-top: 0.85rem; padding: 0.7rem 0.85rem; border-left: 4px solid var(--accent); background: rgba(15,118,110,0.08); border-radius: 12px; }
+.matrix { width: 100%; border-collapse: collapse; font-size: 0.6em; }
+.matrix th, .matrix td { border: 1px solid var(--line); padding: 0.45rem 0.5rem; vertical-align: top; }
+.matrix th { background: rgba(15,118,110,0.08); }
+.callout { background: linear-gradient(135deg, rgba(15,118,110,0.10), rgba(139,92,246,0.08)); border: 1px solid var(--line); border-radius: 18px; padding: 0.9rem 1rem; }
+.timeline { display: grid; gap: 0.45rem; }
+.step { display: grid; grid-template-columns: 1.2rem 1fr; gap: 0.6rem; align-items: start; }
+.step .num { font-weight: 800; color: var(--accent); }
+.reveal .slides section { text-align: left; }
+.reveal pre { width: 100%; box-shadow: none; }
+.reveal code { background: rgba(15,118,110,0.08); padding: 0.08rem 0.25rem; border-radius: 6px; }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section>
+  <div class="deck-shell">
+    <div class="hero">
+      <div class="badge">Assignment presentation</div>
+      <h1>Advisor Booking System</h1>
+      <div class="chips">
+        <span class="chip">Java 25</span>
+        <span class="chip">Spring Boot 4.1</span>
+        <span class="chip">PostgreSQL</span>
+        <span class="chip">Redis</span>
+        <span class="chip">RabbitMQ</span>
+        <span class="chip">Microsoft Graph API</span>
+      </div>
+      <div class="note">
+        <strong>Chosen style:</strong> Modular monolith with clear internal modules. Keep it simple now, split later if demand or team size grows.
+      </div>
+    </div>
+    <div class="card">
+      <h3>What this deck answers</h3>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>1. Solution Overview</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Architecture style</h3>
+      <ul>
+        <li><strong>Modular monolith</strong> with domain modules for booking, calendar, and notification.</li>
+        <li>Best fit for the scope and team size implied by the assignment.</li>
+        <li>Simple deployment, low operational overhead, easy to maintain.</li>
+        <li>Clear boundaries make future extraction into microservices possible.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Key technologies</h3>
+      <ul>
+        <li>Spring Boot REST API for web and mobile channels.</li>
+        <li>PostgreSQL for durable booking storage.</li>
+        <li>Redis for short-lived slot reservation / caching.</li>
+        <li>RabbitMQ for asynchronous email processing.</li>
+        <li>Microsoft Graph API for Outlook calendar and email integration.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:1rem;">
+    <h3>Expected Java components</h3>
+    <div class="grid-3">
+      <div><strong>BookingController</strong><br><span class="small">REST endpoints for availability, booking, cancel, and lookup</span></div>
+      <div><strong>BookingService</strong><br><span class="small">Core booking orchestration and transaction boundary</span></div>
+      <div><strong>CalendarService</strong><br><span class="small">Graph API calls for availability and event creation</span></div>
+      <div><strong>NotificationService</strong><br><span class="small">Confirmation / cancellation email handling</span></div>
+      <div><strong>BookingRepository</strong><br><span class="small">Persistent booking storage in PostgreSQL</span></div>
+      <div><strong>Advisor / BookingSlot entities</strong><br><span class="small">Domain model for advisors, slots, and bookings</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>2. Architecture Diagram</h2>
+  <div class="mermaid-box">
+<pre class="mermaid">
+flowchart LR
+  Website[Website] --> API[Backend API\nSpring Boot]
+  Mobile[Mobile App] --> API
+  API --> DB[(PostgreSQL)]
+  API --> Cache[(Redis)]
+  API --> MQ[(RabbitMQ)]
+  API --> Graph[Microsoft Graph API]
+  Graph --> Calendar[Exchange Online Calendar]
+  Graph --> Email[Email / Outlook]
+  MQ --> EmailSvc[Notification handling]
+  EmailSvc --> Graph
+</pre>
+  </div>
+  <div class="note">
+    The API remains the single entry point. Web and mobile use the same booking contract, which keeps business rules consistent across channels.
+  </div>
+</section>
+
+<section>
+  <h2>Step-by-Step Booking Flow</h2>
+  <div class="timeline card">
+    <div class="step"><div class="num">1.</div><div>Customer submits a booking request from website or mobile app.</div></div>
+    <div class="step"><div class="num">2.</div><div>BookingController validates the request and passes it to BookingService.</div></div>
+    <div class="step"><div class="num">3.</div><div>BookingService checks current slot availability and starts a database transaction.</div></div>
+    <div class="step"><div class="num">4.</div><div>The chosen slot is locked and re-checked inside PostgreSQL so two requests cannot win at the same time.</div></div>
+    <div class="step"><div class="num">5.</div><div>CalendarService creates the event in Exchange / Outlook through Microsoft Graph API.</div></div>
+    <div class="step"><div class="num">6.</div><div>The booking is stored in PostgreSQL and the slot is marked as no longer available.</div></div>
+    <div class="step"><div class="num">7.</div><div>A confirmation event is published for email handling; the customer receives the confirmed booking response.</div></div>
+  </div>
+</section>
+
+<section>
+  <h2>3. Handling Race Conditions</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h3>How duplicates are prevented</h3>
+      <ul>
+        <li><strong>Database transaction</strong> keeps booking creation atomic.</li>
+        <li><strong>Pessimistic locking</strong> prevents concurrent requests from claiming the same slot.</li>
+        <li><strong>Unique constraint</strong> on advisor + slot time is the final safety net.</li>
+        <li><strong>Redis reservation</strong> can optionally hide the slot from other channels for a short time.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>User experience</h3>
+      <ul>
+        <li>If Customer A wins, the slot is confirmed immediately.</li>
+        <li>If Customer B arrives milliseconds later, the API returns a clean "slot unavailable" response.</li>
+        <li>The UI should refresh the available slots list and prompt the user to choose another time.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout" style="margin-top:1rem;">
+    <strong>Consistency mechanism:</strong> database isolation + row lock + unique constraint. That combination is stronger than a cache-only approach.
+  </div>
+</section>
+
+<section>
+  <h2>4. Error Handling</h2>
+  <table class="matrix">
+    <thead>
+      <tr>
+        <th>Scenario</th>
+        <th>Customer experience</th>
+        <th>Logging</th>
+        <th>Retries</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Calendar service unavailable</td>
+        <td>Booking is rejected with a friendly "calendar temporarily unavailable" message.</td>
+        <td>Log the Graph API error, advisor ID, and request correlation ID.</td>
+        <td>Yes, retry a few times with backoff; do not confirm the booking without calendar success.</td>
+      </tr>
+      <tr>
+        <td>Database unavailable</td>
+        <td>Show a maintenance / try again later message.</td>
+        <td>Log as critical infrastructure failure and trigger health alerts.</td>
+        <td>No. Do not continue when persistence is unavailable.</td>
+      </tr>
+      <tr>
+        <td>Confirmation email fails</td>
+        <td>The booking still remains confirmed; email is retried asynchronously.</td>
+        <td>Log warning with booking ID and message details.</td>
+        <td>Yes, use queue retry + dead-letter queue for manual follow-up.</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>5. Scalability and Monitoring</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Scale target</h3>
+      <p class="kpi">500,000 bookings / month</p>
+      <p>That is roughly 700 bookings per hour. The load is manageable for a modular monolith with a single PostgreSQL backend and horizontal API scaling.</p>
+      <ul>
+        <li>Add more API instances behind a load balancer.</li>
+        <li>Keep booking rules in one place to avoid channel drift.</li>
+        <li>Use Redis for hot availability reads and PostgreSQL for the source of truth.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Monitoring in production</h3>
+      <ul>
+        <li><strong>Metrics:</strong> Prometheus + Grafana</li>
+        <li><strong>Logs:</strong> centralized structured logs</li>
+        <li><strong>Tracing:</strong> request correlation ID per booking</li>
+        <li><strong>Health:</strong> actuator health checks for DB, queue, and external API availability</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note">
+    Key operational metrics: booking success rate, average booking latency, calendar API latency, email delivery success, and database pool saturation.
+  </div>
+</section>
+
+<section>
+  <h2>Summary</h2>
+  <div class="card">
+    <ul>
+      <li>A modular monolith is the simplest solution that still meets the business needs.</li>
+      <li>PostgreSQL is the source of truth; Redis and RabbitMQ improve responsiveness and resilience.</li>
+      <li>Race conditions are handled at the database level, not by UI timing.</li>
+      <li>Calendar and email are integrated through Microsoft Graph API, keeping the Microsoft 365 ecosystem intact.</li>
+      <li>The design can scale to the requested volume and is easy to evolve later.</li>
+    </ul>
+  </div>
+  <p class="small" style="margin-top:1rem;">Open this file directly in the browser or serve it as a static presentation entry point.</p>
+</section>
+
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });
+Reveal.initialize({
+  width: 1280,
+  height: 720,
+  slideNumber: true,
+  hash: true,
+  transition: 'fade',
+  backgroundTransition: 'fade',
+  plugins: [RevealHighlight]
+});
+</script>
+</body>
+</html>

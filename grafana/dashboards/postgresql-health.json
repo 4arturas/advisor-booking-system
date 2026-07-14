@@ -1,0 +1,86 @@
+{
+  "title": "PostgreSQL Health",
+  "uid": "postgresql-health",
+  "version": 2,
+  "panels": [
+    {
+      "title": "Database Connections",
+      "type": "gauge",
+      "datasource": "Prometheus",
+      "gridPos": { "h": 6, "w": 8, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "pg_stat_database_numbackends{datname=\"advisor_booking\"}",
+          "legendFormat": "Connections"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "min": 0,
+          "max": 50,
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 20 },
+              { "color": "red", "value": 40 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "title": "Cache Hit Ratio",
+      "type": "gauge",
+      "datasource": "Prometheus",
+      "gridPos": { "h": 6, "w": 8, "x": 8, "y": 0 },
+      "targets": [
+        {
+          "expr": "rate(pg_stat_database_blks_hit{datname=\"advisor_booking\"}[5m]) / (rate(pg_stat_database_blks_read{datname=\"advisor_booking\"}[5m]) + rate(pg_stat_database_blks_hit{datname=\"advisor_booking\"}[5m])) * 100",
+          "legendFormat": "Hit %"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 90 },
+              { "color": "green", "value": 99 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "title": "Transactions",
+      "type": "timeseries",
+      "datasource": "Prometheus",
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 0 },
+      "targets": [
+        {
+          "expr": "rate(pg_stat_database_xact_commit{datname=\"advisor_booking\"}[5m])",
+          "legendFormat": "Commits/s"
+        },
+        {
+          "expr": "rate(pg_stat_database_xact_rollback{datname=\"advisor_booking\"}[5m])",
+          "legendFormat": "Rollbacks/s"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "tps",
+          "custom": { "showPoints": "never" },
+          "color": { "mode": "palette-classic" }
+        }
+      }
+    }
+  ],
+  "schemaVersion": 39,
+  "time": { "from": "now-1h", "to": "now" },
+  "timezone": "browser",
+  "editable": true
+}
